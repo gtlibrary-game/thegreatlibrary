@@ -65,13 +65,13 @@ const WalletConnect = () => {
           })();
           isConfirm = false;
       }
-  }, [account, error]);
+  }, [account, error, active, chainId, activate ]);
 
   useEffect(() => {
       if (!active && localStorage.getItem("accountStatus")) {
           activate(injected);
       }
-  }, [])
+  }, [ active, activate])
 
   return (
     <div className='cart-container'>
