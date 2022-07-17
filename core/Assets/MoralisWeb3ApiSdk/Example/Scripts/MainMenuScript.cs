@@ -321,6 +321,16 @@ public class MainMenuScript : MonoBehaviour
         }
     }
 
+    public string chainID = "avalanche testnet";
+    public string getAddress(string _addr) {
+        if (_addr.Equals("TimeCube")) {
+            return "0x85617d3e9c7b56df186cf99569cdeaae66febac4"; //Warning: this assumed the same as 
+                                                                       ///the value in the MainMenuScripts.cs
+        } 
+
+        return "0x0";
+    }
+
     private void InitializeWeb3()
     {
         MoralisInterface.SetupWeb3();
@@ -328,7 +338,7 @@ public class MainMenuScript : MonoBehaviour
         // Create an entry for the Game Rewards Contract.
         MoralisInterface.InsertContractInstance("Rewards", Constants.MUG_ABI, Constants.MUG_CHAIN, Constants.MUG_CONTRACT_ADDRESS);
 
-        MoralisInterface.InsertContractInstance("TimeCube", MoralisInterface.getAbi("TimeCube"), MoralisInterface.getChain(), MoralisInterface.getAddress("TimeCube"));
+        MoralisInterface.InsertContractInstance("TimeCube", MoralisWeb3ApiSdk.TimeCubeABI.ABI, chainID, getAddress("TimeCube"));//getChain(), getAddress("TimeCube"));
     }
 
     /// <summary>
