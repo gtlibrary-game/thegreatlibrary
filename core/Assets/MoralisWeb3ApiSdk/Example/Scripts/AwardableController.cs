@@ -78,18 +78,11 @@ public class AwardableController : MonoBehaviour
         {
     */
 
-    public string getAddress(string _addr) {
-        if (_addr.Equals("TimeCube")) {
-            return "0x85617d3e9c7b56df186cf99569cdeaae66febac4"; //Warning: this assumed the same as 
-                                                                       ///the value in the MainMenuScripts.cs
-        } 
 
-        return "0x0";
-    }
 
     async UniTask getCubeTime(string fromAddress)
     {
-        string startTime = await MoralisInterface.ExecuteContractFunction(getAddress("TimeCube"),
+        string startTime = await MoralisInterface.ExecuteContractFunction(Constants.getAddress("TimeCube"),
                                                                     MoralisWeb3ApiSdk.TimeCubeABI.ABI,
                                                                     "cubeTime", 
                                                                     Array.Empty<object>(),
