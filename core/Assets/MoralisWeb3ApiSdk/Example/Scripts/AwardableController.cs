@@ -82,7 +82,7 @@ public class AwardableController : MonoBehaviour
 
     async UniTask getCubeTime(string fromAddress)
     {
-        string startTime = await MoralisInterface.ExecuteContractFunction(Constants.getAddress("TimeCube"),
+        string startTime = await MoralisInterface.ExecuteContractFunction(MoralisWeb3ApiSdk.GameEnv.timeCubeAddress,
                                                                     MoralisWeb3ApiSdk.TimeCubeABI.ABI,
                                                                     "cubeTime", 
                                                                     Array.Empty<object>(),
