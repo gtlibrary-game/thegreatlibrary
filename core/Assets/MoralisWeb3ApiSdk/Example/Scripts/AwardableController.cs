@@ -77,9 +77,12 @@ public class AwardableController : MonoBehaviour
             HexBigInteger gasPrice)
         {
     */
+
+
+
     async UniTask getCubeTime(string fromAddress)
     {
-        string startTime = await MoralisInterface.ExecuteContractFunction(MoralisInterface.getAddress("TimeCube"),
+        string startTime = await MoralisInterface.ExecuteContractFunction(Constants.getAddress("TimeCube"),
                                                                     MoralisWeb3ApiSdk.TimeCubeABI.ABI,
                                                                     "cubeTime", 
                                                                     Array.Empty<object>(),

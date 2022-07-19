@@ -89,7 +89,6 @@ public class MainMenuScript : MonoBehaviour
         joystick.SetActive(true);
 #endif
 
-        // await MoralisInterface.Initialize(MoralisApplicationId, MoralisServerURI, hostManifestData);
         if (moralisController != null && moralisController)
         {
             await moralisController.Initialize();
@@ -98,6 +97,16 @@ public class MainMenuScript : MonoBehaviour
         {
             // Moralis values not set or initialized.
             Debug.LogError("The MoralisInterface has not been set up, please check you MoralisController in the scene.");
+            HostManifestData hostManifestData = new HostManifestData() {
+                    Version = "1null",
+                    Identifier = "1null",
+                    Name = "1null",
+                    ShortVersion = "1null"
+            };
+
+
+            //await MoralisInterface.Initialize(MoralisApplicationId, MoralisServerURI, hostManifestData, clientMeta);
+            MoralisInterface.Initialize(Constants.appID, Constants.serverURI, hostManifestData); //), clientMeta); //MoralisApplicationId, MoralisServerURI, hostManifestData);
         }
 
         // If user is not logged in show the "Authenticate" button.
@@ -321,6 +330,8 @@ public class MainMenuScript : MonoBehaviour
         }
     }
 
+
+
     private void InitializeWeb3()
     {
         MoralisInterface.SetupWeb3();
@@ -328,7 +339,7 @@ public class MainMenuScript : MonoBehaviour
         // Create an entry for the Game Rewards Contract.
         MoralisInterface.InsertContractInstance("Rewards", Constants.MUG_ABI, Constants.MUG_CHAIN, Constants.MUG_CONTRACT_ADDRESS);
 
-        MoralisInterface.InsertContractInstance("TimeCube", MoralisInterface.getAbi("TimeCube"), MoralisInterface.getChain(), MoralisInterface.getAddress("TimeCube"));
+        MoralisInterface.InsertContractInstance("TimeCube", MoralisWeb3ApiSdk.TimeCubeABI.ABI, Constants.chainID, Constants.getAddress("TimeCube"));//getChain(), getAddress("TimeCube"));
     }
 
     /// <summary>
