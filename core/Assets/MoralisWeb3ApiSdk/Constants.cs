@@ -14,11 +14,5 @@ namespace MoralisWeb3ApiSdk
         public static string masterKey = "";    // Leave blank.
 
         public static string chainID = "avalanche testnet";
-        public static string getAddress(string _addr) {
-            if (_addr.Equals("TimeCube")) {
-                return "0x85617d3e9c7b56df186cf99569cdeaae66febac4";
-            }
-            return "0x0";   
-        }
     }
 }
