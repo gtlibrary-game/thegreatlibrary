@@ -106,7 +106,7 @@ public class MainMenuScript : MonoBehaviour
 
 
             //await MoralisInterface.Initialize(MoralisApplicationId, MoralisServerURI, hostManifestData, clientMeta);
-            MoralisInterface.Initialize(Constants.appID, Constants.serverURI, hostManifestData); //), clientMeta); //MoralisApplicationId, MoralisServerURI, hostManifestData);
+            //MoralisInterface.Initialize(Constants.appID, Constants.serverURI, hostManifestData); //), clientMeta); //MoralisApplicationId, MoralisServerURI, hostManifestData);
         }
 
         // If user is not logged in show the "Authenticate" button.
@@ -339,7 +339,7 @@ public class MainMenuScript : MonoBehaviour
         // Create an entry for the Game Rewards Contract.
         MoralisInterface.InsertContractInstance("Rewards", Constants.MUG_ABI, Constants.MUG_CHAIN, Constants.MUG_CONTRACT_ADDRESS);
 
-        MoralisInterface.InsertContractInstance("TimeCube", MoralisWeb3ApiSdk.TimeCubeABI.ABI, Constants.chainID, Constants.getAddress("TimeCube"));//getChain(), getAddress("TimeCube"));
+        MoralisInterface.InsertContractInstance("TimeCube", MoralisWeb3ApiSdk.TimeCubeABI.ABI, Constants.chainID, MoralisWeb3ApiSdk.GameEnv.timeCubeAddress);//getChain(), getAddress("TimeCube"));
     }
 
     /// <summary>
