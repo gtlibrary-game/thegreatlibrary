@@ -33,7 +33,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     uint256 private royalty;
 
     address private safeSender;
-    address private bookRegistryAddress;
+    //address private bookRegistryAddress;
 
     // Culture Coin 
     mapping(uint256 => uint256) private gasBalance;  // The Culture Coin balances for each token.
@@ -50,7 +50,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
         ERC721BookTradable(_name, _symbol, _cCA, _maxmint) {
         require(_cCA!=address(0), "Invalid admin address");
         require(_gasToken!=address(0), "Invalid gas token");
-        require(_bookRegistryAddress!=address(0), "Invalid bookRegistryAddress");
+        //require(_bookRegistryAddress!=address(0), "Invalid bookRegistryAddress");
 
 	    cCA = _cCA;
         baseuri = _baseuri;
@@ -62,12 +62,12 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 
         royalty = 5;  //5%
 
-	    bookRegistryAddress = _bookRegistryAddress;
+	    //bookRegistryAddress = _bookRegistryAddress;
     }
 
     // Used like: DCBT.safeTransferFromRegistry(address(this), msg.sender, DCBT.totalSupply());
     function safeTransferFromRegistry(address from, address to, uint256 tokenId) public nonReentrant{
-	    require(msgSender() == bookRegistryAddress || isAddon[msgSender()], "Only addon can safe send.");
+	    require(isAddon[msgSender()], "Addons only.");
 
         address tokenOwner = ERC721.ownerOf(tokenId);
         require(tokenOwner != to, "Token owner can not transfer token to self.");
@@ -91,7 +91,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     mapping(address => bool) public isAddon;
     function setAddon(address _addon, bool _isAddon) public {
         require(_addon!=address(0), "Invalid address");
-        require(cCA == msgSender() || msgSender() == bookRegistryAddress || isAddon[msg.sender]);
+        require(cCA == msgSender() || isAddon[msg.sender]);
         isAddon[_addon] = _isAddon;
     }
     function getAddon(address _addon) external view returns(bool) {
@@ -123,7 +123,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 
     function setRewardContract(address _rewardContract) public {
         require(_rewardContract!=address(0), "Invalid address");
-        require(msgSender() == owner() || msgSender() == bookRegistryAddress || cCA == msgSender(), "Only the owner or registery may change the reward contract.");
+        require(msgSender() == owner() || cCA == msgSender(), "Only the owner or registery may change the reward contract.");
 
     	rewardContract = _rewardContract;
     }
@@ -141,7 +141,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     }
 
     function setRoyalty(uint256 _royalty) external {
-    	require(msgSender() == owner() || msgSender() == bookRegistryAddress || msgSender() == cCA);
+    	require(msgSender() == owner() || msgSender() == cCA);
         require(royalty <= 99, "Be between 0 and 99.");
 
         royalty = _royalty;
@@ -150,7 +150,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 
     function setGasToken(address _gasToken) external {
         require(_gasToken!=address(0), "Invalid address");
-    	require(msgSender() == owner() || msgSender() == bookRegistryAddress || cCA == msgSender());
+    	require(msgSender() == owner() || cCA == msgSender());
 
     	gasToken = _gasToken;
     }
@@ -162,7 +162,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     // This function burns the Culture Coins that the contract owns on behalf of the token owner.
     function burnGas(uint256 _tokenId, uint256 _amount, string memory _reason) external nonReentrant{
         address tokenOwner = ownerOf(_tokenId);
-        require(msgSender() == tokenOwner || msgSender() == bookRegistryAddress || cCA == msgSender(), "Amins only.");
+        require(msgSender() == tokenOwner || cCA == msgSender(), "Amins only.");
 
         require(gasBalance[_tokenId] >= _amount, "Refill.");
         gasBalance[_tokenId] -= _amount;
@@ -187,11 +187,11 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 	    return defaultprice;
     }
     function setDefaultPrice(uint256 _defaultprice) external {
-    	require(msgSender() == owner() || msgSender() == bookRegistryAddress || cCA == msgSender());
+    	require(msgSender() == owner() || cCA == msgSender());
     	defaultprice = _defaultprice;
     }
     function setDefaultFrom(uint256 _defaultfrom) external {
-    	require(msgSender() == owner() || msgSender() == bookRegistryAddress || cCA == msgSender());
+    	require(msgSender() == owner() || cCA == msgSender());
 	defaultfrom = _defaultfrom;
     }
     function getDefaultFrom() public view returns(uint256) {
@@ -204,7 +204,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     }
 /*
     function setBurnerFee(uint256 tokenId, uint256 _fee) public {
-    	require(msgSender() == owner() || msgSender() == bookRegistryAddress || msgSender() == cCA);
+    	require(msgSender() == owner() || msgSender() == cCA);
 	burnerfee[tokenId] = _fee;
     }
 */
@@ -236,10 +236,10 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
         return string(abi.encodePacked(baseuri, "contract/"));
     }
 
+/*
     function getProxyRegistryAddress() public view returns(address) {
     	return bookRegistryAddress;
     }
-
     // So we can change the marketplace address for the books if needed.
     function setProxyRegistryAddress(address _bookRegistryAddress) public {
         require(_bookRegistryAddress!=address(0), "Invalid address");
@@ -247,5 +247,6 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 
     	bookRegistryAddress = _bookRegistryAddress;
     }
+*/
 }
 

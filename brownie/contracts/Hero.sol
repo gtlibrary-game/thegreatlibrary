@@ -96,7 +96,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 	//
 
     	constructor (address _cCA, address _cultureCoin, address _nbt, address _registryAddress, address _baseSpells, address _myItems)
-		BookTradable("The Scarab Cycle's Heros", "TSCH", _registryAddress, "https://greatlibrary.io/games/TSC/heros/", true, MAXUINT, MAXUINT, MAXUINT, _cultureCoin, _cCA) {
+		BookTradable("ScarabCycle", "TSCH", _registryAddress, "https://greatlibrary.io/games/TSC/heros/", true, MAXUINT, MAXUINT, MAXUINT, _cultureCoin, _cCA) {
 		cCA = _cCA;
 		CC = CultureCoin(_cultureCoin);
 
@@ -183,13 +183,13 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 	}
 	event Casting(address sender, uint256 _who, uint what, uint amount);
 	function doCast(uint256 _hId, uint _whatId, uint _amount) external {
-		require(msg.sender == cCA || isAddon[msg.sender], "doCast");
+		require(msg.sender == cCA || isAddon[msg.sender]);
 		casts[_hId][_whatId] += _amount;
                 emit Casting(msg.sender, _hId, _whatId, _amount);
 	}
 	event Uncasting(address sender, uint256 _who, uint what, uint amount);
 	function unCast(uint256 _hId, int _whatId, uint _amount) external returns(bool) {
-                require(msg.sender == cCA || isAddon[msg.sender], "unCast");
+                require(msg.sender == cCA || isAddon[msg.sender]);
 		if(_amount > casts[_hId][uint(_whatId)]) {
 			return false;
 		}
@@ -200,7 +200,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
         }
 	event HP(uint256 _hId, uint256 target, int amount, uint256 hp, uint effect);
 	function healByPercent(uint256 _hId, uint256 _target, uint _amount, int _healType, uint _effect) public {
-		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]), "N");
+		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]));
 		uint _hpBefore = hHp[_target];
 		hHp[_target] += _amount;
 		if(_effect > 0) items.hpByEffect(address(this), _hId, _target, _hpBefore, hHp[_target], HEAL_BY_PERCENT, _effect);
@@ -210,7 +210,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 		emit HP(_hId, _target, int(_amount), hHp[_target], _effect);
 	}
 	function healBy(uint256 _hId, uint256 _target, uint _amount, int _healType, uint _effect) public {
-		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]), "N");
+		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]));
 
 		uint _hpBefore = hHp[_target];
 		hHp[_target] = items.getHPWithAmount(address(this), _target, hHp[_target], int(_amount), _healType);
@@ -219,7 +219,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 		emit HP(_hId, _target, int(_amount), hHp[_target], _effect);
 	}
         function hurtBy(uint256 _hId, uint256 _target, uint _amount, int _damageType, uint _effect) public {	//NBT here means we are saying that bookmark holders own all heros minted from them.
-		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]), "N");
+		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]));
 		uint _hpBefore = hHp[_target];
 		hHp[_target] = items.getHPWithAmount(address(this), _target, hHp[_target], -int(_amount), _damageType);
 		if(_effect > 0) items.hpByEffect(address(this), _hId, _target, _hpBefore, hHp[_target], _damageType, _effect);
@@ -260,7 +260,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 		}
 	}
         function powerUp(uint256 _target, uint _amount) public {
-		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]), "N");
+		require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]));
                 hPower[_target] += _amount * 1 ether / maxPower[_target];
 		if(hPower[_target] > 1.0 ether) {
 			hPower[_target] = 1.0 ether;
@@ -268,7 +268,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 		emit Power(_target, hPower[_target]);
 	}
 	function powerDown(uint256 _target, uint _amount) public returns (uint) {
-                require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]), "N");
+                require(isAddon[msg.sender] || msg.sender == cCA || msg.sender == NBT.ownerOf(hSpawn[_target]));
 		if(_amount > hPower[_target]) {
 			hPower[_target] = 0;
 		} else {
