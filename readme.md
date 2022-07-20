@@ -11,10 +11,10 @@ All our code is open source:
 
 ## Major TODOs
 
-1. Create working installer. **Top priority?**
+1. Create working installer. *Top priority?*
 2. New user onboarding for the users who have never used crypto before.
 3. Add 'use strict'; in all js code
-4. Migrate away from moralis-backend.js to secure-mackend.js --jrr's current task (remove crypto package and use builtin one.)
+4. Migrate away from moralis-backend.js to secure-backend.js --jrr's current task (remove crypto package and use builtin one.)
 5. Make site work from windows, macos, etc. 
 6. Remove the heavy node_modules commits jrr made and move to using package.json
 7. Add twitter-like capabilities for the messaging components of the site
