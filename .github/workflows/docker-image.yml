@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.FIRSTBUILDERSECRET }}
+      with:                                                 # This line is crashing?
+            token: ${{ secrets.FIRSTBUILDERSECRET }}
         
 on:
   push:
