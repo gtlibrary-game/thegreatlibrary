@@ -35,7 +35,7 @@ const WalletConnect = () => {
               try {
                   await ethereum.request({
                       method: "wallet_switchEthereumChain",
-                      params: [{ chainId: "0x4" }],
+                      params: [{ chainId: "0xA869" }],
                   });
               } catch (switchError) {
                   if (switchError.code === 4902) {
@@ -44,15 +44,15 @@ const WalletConnect = () => {
                               method: "wallet_addEthereumChain",
                               params: [
                                   {
-                                      chainId: "0x4",
-                                      chainName: "Rinkeby Test Network",
+                                      chainId: "0xA869",
+                                      chainName: "Avalanche Testnet C-Chain",
                                       nativeCurrency: {
-                                          name: "ETH",
-                                          symbol: "ETH",
+                                          name: "Avalanche",
+                                          symbol: "AVAX",
                                           decimals: 18,
                                       },
-                                      rpcUrls: ["https://rinkeby.infura.io/v3/"],
-                                      blockExplorerUrls: ["https://rinkeby.etherscan.io/"],
+                                      rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
+                                      blockExplorerUrls: ["https://testnet.snowtrace.io/"],
                                   },
                               ],
                           });
