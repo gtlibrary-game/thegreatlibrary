@@ -1,17 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import withRouter from '../../withRouter';
 import { ProductsContext } from '../../context/products-context';
 import { CartContext } from '../../context/cart-context';
 import Layout from '../shared/layout';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import './single-product.styles.scss';
 
 const SingleProduct = ({ match }) => {
   const navigate = useNavigate();
   const { products } = useContext(ProductsContext);
   const { addProduct, increase } = useContext(CartContext);
-  const { id } = match.params;
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
   useEffect(() => {
     const product = products.find(item => Number(item.id) === Number(id));
@@ -23,15 +24,39 @@ const SingleProduct = ({ match }) => {
 
     setProduct(product);
   }, [id, product, navigate, products]);
+
+  const url = "http://localhost:9466/api/art?type=default&datamine=TLSC"
+
+  useEffect(() => {
+    async function getPdfData() {
+      const config = {
+        method: 'get',
+        url: url,
+        headers: { 
+          'Content-Type': 'text/html; charset=utf-8',
+          'X-Frame-Options': 'SAMEORIGIN',
+          'X-Content-Type-Options': 'nosniff' 
+        }
+      }
+      let res = await axios(config)
+      .then(res => {
+        res.setHeader("Access-Control-Allow-Origin", "*")
+        res.setHeader("Access-Control-Allow-Methods", "*")
+        res.setHeader("Access-Control-Allow-Headers", "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'")
+        console.log("res.data =========== ", res.data)
+      })
+    }
+    
+    getPdfData();
+  }, []);
   // while we check for product
   if (!product) { return null }
   const { imageUrl, author, title, price, description } = product;
   return (
     <Layout>
       <div className='single-product-container'>
-        <div className='product-image'>
-          {/* <img src={imageUrl} alt='product' /> */}
-          <img src='assets/img/template_1.jpg' alt='product' />
+        <div className='product-content'>
+          {/* <div dangerouslySetInnerHTML={{__html: Pdfcontent(url)}} /> */}
         </div>
         <div className='product-details'>
           <div className='name-price'>
@@ -67,6 +92,14 @@ const SingleProduct = ({ match }) => {
         </div>
       </div>
     </Layout>
+  );
+}
+
+const Pdfcontent = (url) => {
+  return (
+    <div>
+      <iframe src={url} className="pdf-maincontent"></iframe>
+    </div>
   );
 }
 

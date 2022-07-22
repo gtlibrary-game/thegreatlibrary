@@ -8,12 +8,12 @@
     justify-content: center;
     align-items: center;
 
-    .product-image, .product-details {
+    .product-content, .product-details {
       flex: 0 0 400px;
     }
   }
 
-  .product-image {
+  .product-content {
     margin: 2rem;
   }
 
@@ -31,5 +31,18 @@
         line-height: 1.5;
       }
     }
+  }
+  .pdf-maincontent {
+    width: 800px;
+    height: 80vh;
+    background-image: linear-gradient(to bottom right, #840, #420);
+    outline: #e95 dashed 1px;
+    padding: 10px;
+    border-radius: 10px;
+    outline-offset: -3px;
+    border: none;
+    box-shadow: inset 1px 1px 2px #e95, inset -1px -1px 2px black;
+    color: white;
+    transition: 0.1s;
   }
 }
