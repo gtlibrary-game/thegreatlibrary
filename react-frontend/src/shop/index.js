@@ -4,7 +4,7 @@ const SHOP_DATA = [
     author: 'John R. Raymond',
     title: 'The Art of Doing Science and Engineering: Learning to Learn',
     description: 'The Art of Doing Science and Engineering is a reminder that a childlike capacity for learning and creativity are accessible to everyone.',
-    imageUrl: 'assets/img/mattwimer_1.jpg',
+    imageUrl: 'assets/img/tlsc.jpg',
     price: 23,
   },
   {
@@ -12,7 +12,7 @@ const SHOP_DATA = [
     author: 'John R. Raymond',
     title: 'The Making of Prince of Persia: Journals 1985-1993',
     description: 'In The Making of Prince of Persia, on the 30th anniversary of the game’s release, Mechner looks back at the journals he kept from 1985 to 1993.',
-    imageUrl: 'assets/img/mattwimer_2.jpg',
+    imageUrl: 'assets/img/cote.jpg',
     price: 25,
   },
   {
@@ -20,7 +20,7 @@ const SHOP_DATA = [
     author: 'John R. Raymond',
     title: 'Working in Public: The Making and Maintenance of Open Source',
     description: 'Nadia Eghbal takes an inside look at modern open source and offers a model through which to understand the challenges faced by online creators.',
-    imageUrl: 'assets/img/mattwimer_3.jpg',
+    imageUrl: 'assets/img/kotg.jpg',
     price: 28,
   },
   {
@@ -28,15 +28,15 @@ const SHOP_DATA = [
     author: 'John R. Raymond',
     title: 'High Growth Handbook',
     description: 'High Growth Handbook is the playbook for turning a startup into a unicorn and navigating the most complex challenges that confront leaders and operators in high-growth startups.',
-    imageUrl: 'assets/img/mattwimer_4.jpg',
+    imageUrl: 'assets/img/oots.jpg',
     price: 28,
   },  
   {
     id: 5,
-    author: 'John R. Raymond',
+    author: 'Lawrence Stanley',
     title: 'The Dream Machine',
     description: 'In a simultaneously compelling personal narrative and comprehensive historical exposition, Waldrop tells the story of the man who not only instigated the work that led to the internet, but also shifted our understanding of what computers were and could be.',
-    imageUrl: 'https://press.stripe.com/img/v3/books/covers/tdm.jpg',
+    imageUrl: 'assest/img/itbg.jpg',
     price: 20,
   },
   {
