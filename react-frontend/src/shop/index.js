@@ -36,7 +36,7 @@ const SHOP_DATA = [
     author: 'Lawrence Stanley',
     title: 'The Dream Machine',
     description: 'In a simultaneously compelling personal narrative and comprehensive historical exposition, Waldrop tells the story of the man who not only instigated the work that led to the internet, but also shifted our understanding of what computers were and could be.',
-    imageUrl: 'assest/img/itbg.jpg',
+    imageUrl: 'assets/img/itbg.jpg',
     price: 20,
   },
   {
