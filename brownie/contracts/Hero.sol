@@ -235,7 +235,6 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 	function getHPSumary(uint _target) public returns(HPSummary memory) {
 		return hpSum[_target];
 	}
-
 	function alive(uint256 _hp) public pure returns(bool) {
                 return _hp > 0;
         }
