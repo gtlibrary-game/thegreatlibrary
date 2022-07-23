@@ -44,6 +44,7 @@ img {
     .products {
       display: flex;
       justify-content: space-between;
+      align-items: stretch;
       padding: 5px;
 
       .featured-product {

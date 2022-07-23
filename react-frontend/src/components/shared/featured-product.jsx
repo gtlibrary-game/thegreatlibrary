@@ -10,7 +10,7 @@ const FeaturedProduct = (props) => {
   const product = { title, imageUrl, price, id,  description };
   const { addProduct, increase } = useContext(CartContext);
   return (
-    <div className='featured-product'>
+    <div className='featured-product col-md-3 col-sm-6 col-xs-12'>
       <div className='featured-image' onClick={() => navigate(`/product/${id}`)}>
         <img src={imageUrl} alt='product' />
       </div>
