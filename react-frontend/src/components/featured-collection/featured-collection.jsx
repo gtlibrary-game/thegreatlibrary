@@ -11,7 +11,7 @@ const FeaturedCollection = () => {
   return (
     <div className='featured-collection container'>
       <h2 className='featured-section-title'>Facinating Favorites</h2>
-      <div className='products'>
+      <div className='products row'>
         {
           productItems
         }

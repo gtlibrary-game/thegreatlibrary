@@ -372,7 +372,7 @@ npm install @opentelemetry/sdk-node @opentelemetry/api      ## ditto
 
 ```
 sudo apt install git
-git clone https://github.com/johnrraymond/greatlibraryserver
+git clone https://github.com/GtLibrary/thegreatlibrary
 cp -r greatlibraryserver bakerydemo
 cd bakerydemo
 pip3 install -r requirements/base.txt

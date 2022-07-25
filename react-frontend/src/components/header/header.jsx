@@ -20,6 +20,9 @@ const Header = () => {
             Books
           </Link>
         </li>
+        <li>
+          <a href="https://thegreatlibrary-unity-game-thegreatlibrary.vercel.app/" target="_blank">Game</a>
+        </li>
       </ul>
       <WalletConnect />
     </nav>

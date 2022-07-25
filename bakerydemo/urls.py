@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from django.views.generic.base import TemplateView
+from bakerydemo.mobileapp import views
 
 #from froala_editor import views
 
@@ -55,6 +56,8 @@ urlpatterns = [
 
     ### FOR REACT ###
     path('api/', include('bakerydemo.mobileapp.urls')),
+	url(r'^api/art/$', views.art),
+	# url(r'^api/mobileapp/(?P<pk>[0-9]+)$', views.mobileapp_detail),
     #path('home/', include('bakerydemo.frontend.urls')),
 
     url(r'^getData/', frontend_views.get_data),
