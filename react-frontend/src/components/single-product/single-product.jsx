@@ -6,11 +6,13 @@ import { CartContext } from '../../context/cart-context';
 import Layout from '../shared/layout';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import SHOP_DATA from '../../shop';
 import './single-product.styles.scss';
 
 const SingleProduct = ({ match }) => {
   const navigate = useNavigate();
-  const { products } = useContext(ProductsContext);
+  const [products, setProducts] = useState(SHOP_DATA);
+  const [pdfcontent, setPdfcontent] = useState('')
   const { addProduct, increase } = useContext(CartContext);
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -32,18 +34,15 @@ const SingleProduct = ({ match }) => {
       const config = {
         method: 'get',
         url: url,
-        headers: { 
-          'Content-Type': 'text/html; charset=utf-8',
-          'X-Frame-Options': 'SAMEORIGIN',
-          'X-Content-Type-Options': 'nosniff' 
-        }
+        // headers: { 
+        //   'Content-Type': 'text/html; charset=utf-8',
+        //   'X-Frame-Options': 'SAMEORIGIN',
+        //   'X-Content-Type-Options': 'nosniff' 
+        // }
       }
       let res = await axios(config)
       .then(res => {
-        res.setHeader("Access-Control-Allow-Origin", "*")
-        res.setHeader("Access-Control-Allow-Methods", "*")
-        res.setHeader("Access-Control-Allow-Headers", "'Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token'")
-        console.log("res.data =========== ", res.data)
+        setPdfcontent(res.data)
       })
     }
     
@@ -55,8 +54,8 @@ const SingleProduct = ({ match }) => {
   return (
     <Layout>
       <div className='single-product-container'>
-        <div className='product-content'>
-          {/* <div dangerouslySetInnerHTML={{__html: Pdfcontent(url)}} /> */}
+        <div className="product-content">
+          <div className='pdf-maincontent' dangerouslySetInnerHTML={{__html: pdfcontent}} />
         </div>
         <div className='product-details'>
           <div className='name-price'>
@@ -92,14 +91,6 @@ const SingleProduct = ({ match }) => {
         </div>
       </div>
     </Layout>
-  );
-}
-
-const Pdfcontent = (url) => {
-  return (
-    <div>
-      <iframe src={url} className="pdf-maincontent"></iframe>
-    </div>
   );
 }
 

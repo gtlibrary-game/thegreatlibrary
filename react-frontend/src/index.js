@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import ProductsContextProvider from './context/products-context';
 import CartContextProvider from './context/cart-context';
 
 import {
@@ -22,11 +21,9 @@ const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
-      <ProductsContextProvider>
         <CartContextProvider>
           <App />
         </CartContextProvider>
-      </ProductsContextProvider>
     </Web3ReactProvider>
   </React.StrictMode>
 );

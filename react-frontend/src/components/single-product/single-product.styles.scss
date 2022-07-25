@@ -34,7 +34,17 @@
   }
   .pdf-maincontent {
     width: 800px;
-    height: 80vh;
+    height: 90vh;
+    overflow: auto;
+    padding: 20px;
+    // background-image: url("/art/paper.jpg");
+    background-color: antiquewhite;
+  }
+  .pdf-maincontent img{
+    width: 100% !important;
+    height: auto !important;
+  }
+  .product-content {
     background-image: linear-gradient(to bottom right, #840, #420);
     outline: #e95 dashed 1px;
     padding: 10px;
