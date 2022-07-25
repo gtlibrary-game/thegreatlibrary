@@ -20,8 +20,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from django.views.generic.base import TemplateView
-from bakerydemo.mobileapp import views
-
+from bakerydemo.mobileapp import views as frontendapi_views
+from rest_framework import routers
+# from bakerydemo.base import views
 #from froala_editor import views
 
 urlpatterns = [
@@ -56,7 +57,9 @@ urlpatterns = [
 
     ### FOR REACT ###
     path('api/', include('bakerydemo.mobileapp.urls')),
-	url(r'^api/art/$', views.art),
+	url(r'^api/art/$', frontendapi_views.art),
+	# url(r'^api/home', frontendapi_views.home),
+	# url(r'^api/getproducts', frontendapi_views.home),
 	# url(r'^api/mobileapp/(?P<pk>[0-9]+)$', views.mobileapp_detail),
     #path('home/', include('bakerydemo.frontend.urls')),
 

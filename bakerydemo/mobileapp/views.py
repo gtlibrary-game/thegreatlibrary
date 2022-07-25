@@ -336,7 +336,7 @@ def loadSite():
     for sitefile in ["defaults.js", "books.nft.js", "moralisweb3.js"]:     # This is the include order.... careful
         f = open("/home/john/bakerydemo/bakerydemo/static/js/" + sitefile, "r") 
         rawjs += f.read() + """</script><script>"""
-    return rawjs;
+    return rawjs
 
 def getbody(potential, datamine):
 
@@ -510,21 +510,24 @@ def getbody(potential, datamine):
 
 
 def recodehtml(self, html, datamine="TLSC", cur_serial=0):
-   html = html.decode('utf-8', errors="ignore")
+    html = html.decode('utf-8', errors="ignore")
 
- 
-   html = html.replace('<head>', '<head>' + gethead(self, datamine, cur_serial))
-   html = html.replace('</head>', '</head>')
+    html = html.replace('<head>', '')
+    html = html.replace('</head>', '')
+    html = html.replace('<body>', '')
+    html = html.replace('</body>', '')
+#    html = html.replace('<head>', '<head>' + gethead(self, datamine, cur_serial))
+#    html = html.replace('</head>', '</head>')
 
-   html = html.replace('<body>', '<body style="margin:10px;padding:0>' + getbody(self, datamine))
-   html = html.replace('</body>', '</body>')
+#    html = html.replace('<body>', '<body style="margin:10px;padding:0>' + getbody(self, datamine))
+#    html = html.replace('</body>', '</body>')
 
-   html = html.replace('.jpeg', '.jpeg?datamine=' + datamine)
-   html = html.replace('.jpg', '.jpg?datamine=' + datamine)
-   html = html.replace('.png', '.png?datamine=' + datamine)
-   html = html.replace('style.css', 'style.css?datamine=' + datamine)
+    html = html.replace('.jpeg', '.jpeg?datamine=' + datamine)
+    html = html.replace('.jpg', '.jpg?datamine=' + datamine)
+    html = html.replace('.png', '.png?datamine=' + datamine)
+    html = html.replace('style.css', 'style.css?datamine=' + datamine)
 
-   return html.encode('utf-8')
+    return html.encode('utf-8')
 
 
 #
@@ -770,7 +773,7 @@ def myredirect(request, url):
 
     print("redirecting to: " + url)
 
-    return redirect(url)
+    return redirect(url);
 
 def _render(request, artname, content): 
     download = request.GET.get('download', None)
@@ -781,7 +784,7 @@ def _render(request, artname, content):
 
     print("Rendering FORK")
     myRenderOut = render(request, artname, content)
-    print(dir(myRenderOut))
+    # print(dir(myRenderOut))
     myRenderOut["Content-Type"] = "application/fork"
     return myRenderOut
 
@@ -806,6 +809,7 @@ def art(request):
 
     potential = calculate_project_potential(datamine, curserial_num, "book", error_fingerprint="default")
     
+    # getContentPdf(arttype, curserial_num, datamine, redirectCount, daedalusToken, msg, signature, tokenid, potential)
 
     if not os.path.exists(books.datamine_path(datamine)):
         os.mkdir(books.datamine_path(datamine))
@@ -848,117 +852,19 @@ def art(request):
                     
     if arttype == "default": ## FIXME need to deal with the end of the file's tokens.
         bmsupply = getTotalBMTokens(potential, datamine)
-        return myredirect(request, '/art/?' + 'type=book&curserial_num=' + str(bmsupply-1) + '&datamine=' + datamine +"&redirect=" + str(redirectCount+1))
+        # return myredirect(request, '/art/?' + 'type=book&curserial_num=' + str(bmsupply-1) + '&datamine=' + datamine +"&redirect=" + str(redirectCount+1))
+        res = getContentPdf('book', str(bmsupply-1), datamine, str(redirectCount+1), daedalusToken, msg, signature, tokenid, potential,request)
 
+        return res
 
     if arttype == 'book':
-        arthtmlfilename = 'art/datamines/' + datamine + '/' + datamine + '.nft/' + 'index.html.' +  curserial_num + '.html'
-        curhtmlfilename = '/home/john/bakerydemo/bakerydemo/' + arthtmlfilename
-
-        #f = gzip.open(curhtmlfilename, 'rb')
-
-        if not potential.page[0].usejrreditor:  # Try the mass media way.
-            try:
-                f = gzip.open(curhtmlfilename, 'rb')
-                html = f.read()
-                f.close()
-            except:
-                retjson = json.dumps(potential.__dict__, default=lambda o: 'coded')
-                return Response(_render(request, 'art/landingpage1.html', context={'json': SafeString(retjson)}))
-
-        else:  #### JRREDITOR ####
-            if True:
-                pass
-                #if not os.path.exists('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine):
-                    #lock = FileLock("/tmp/high_ground.txt.lock")
-                    #with lock:
-                        #shutil.move('/home/john/' +datamine, '/mnt/media_dir')
-                        #os.symlink('/mnt/media_dir' + datamine, '/home/john/' + datamine)
-                        #os.remove('/tmp/high_ground.txt.lock')
-
-
-                if True:
-                    jrreditor_artname = 'art/datamines/' + datamine + "/jrre-index.html.nft/index.html."+curserial_num+".html"
-                    if not exists(jrreditor_artname):
-                        potential.warning = potential.warning + "The jrreditor art file does not exist. "
-                        print("The jrreditor art file does not exist. ")
-                        
-                        jrreditor_get_art_html(potential, curserial_num, "book")   # This builds and saves the precoded html file.
-
-
-                    
-
-                    bmsupply = getTotalBMTokens(potential, datamine)
-                    print("BMSUPPLY IS " + str(bmsupply))
-                    print("int(curserial_num) - 1 is " + str(int(curserial_num)))
-
-                    if 0 == bmsupply:  ## FIXME should use a template for this..
-                        f = open('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine + '/jrre-index.html.nft/index.html.0.html', "wb")
-                        html = "<html><head><title>Welcome to your book</title></head><body><h1>Welcome!</h1>" + json.dumps(potential.__dict__, default=lambda o: 'coded') + "</body></html>"
-                        html = html.encode('utf-8')
-                        html = recodehtml(potential, html, datamine, bmsupply)
-                        f.write(html)
-                        f.close()
-
-                        curserial_num = "0"  # The curserial is 1 but we will fake it out 
-                        jrreditor_artname = 'art/datamines/' + datamine + "/jrre-index.html.nft/index.html."+curserial_num+".html"
-
-                                                                                            # Need to add this in as well: or bmsupply == potential.page[0].maxbookmarksupply:
-                    elif bmsupply - 1 == int(curserial_num) or ownTheToken(potential, datamine, msg, signature, tokenid, daedalusToken):
-
-                        #f = open('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine + '/jrre-index.html.nft/index.html.' +  curserial_num + '.html', "w")
-
-                        #f = gzip.open("/home/john/" + datamine + "/" + datamine + ".nft/index.html." + curserial_num, 'wb')
-                        f = gzip.open("/mnt/media_dir/" + datamine + "/jrre-index.html.nft/index.html." + curserial_num, 'rb')
-                        html = f.read()
-                        f.close()
-
-                        # We have the art!!! First time on the jrreditor side of the house.
-                        html = recodehtml(potential, html, datamine, curserial_num)
-                        print(str(datamine))
-                        print(str(curserial_num))
-                        f = open('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine + '/jrre-index.html.nft/index.html.' +  curserial_num + '.html', "wb")
-                        f.write(html)
-                        f.close()
-
-                    else:
-                        if redirectCount < 3:
-                            return myredirect(request, '/art/?' + 'type=default&redirect=' + str(redirectCount) + '&datamine=' + datamine)
-
-                        this_is_bad_jrreditor_exeception_we_shouldreturn_potential_maybe
-                        pass
-
-
-                    print("beginning render")
-                    myrender = _render(request, jrreditor_artname, get_serials(curserial_num, potential=potential))
-                    f = open(getmagiccachefile(datamine, curserial_num, arttype), 'wb')
-                    pickle.dump(myrender, f)
-                    f.close()
-
-                    return Response(myrender)
-                    
-                    try:
-                        pass
-                    except:
-                        retjson = calculate_project_potential(datamine, curserial_num, "book", returntype="json", error_fingerprint="Can't do something in jrreditor")
-                        return _render(request, 'art/landingpage1.html', context={'json': SafeString(retjson)})
-
-                    return HttpResponse(html)
-                else:
-                    retjson = json.dumps(potential.__dict__, default=lambda o: 'coded')
-                    return _render(request, 'art/landingpage1.html', context={'json': SafeString(retjson)})
-
-            #html = recodehtml(html, datamine)
-
-            #f = open(curhtmlfilename + ".html", 'wb')
-            #f.write(html)
-            #f.close()
-
-        return HttpResponse("under construction")
-
-        #return _render(request, arthtmlfilename, get_serials(curserial_num))
+        # getContentPdf(arttype, curserial_num, datamine, redirectCount, daedalusToken, msg, signature, tokenid, potential,request)
+        return Response(arttype)
 
     elif arttype == 'bookmark':
+        print("bookmark")
+        print("curserial_num is " + str(curserial_num))
+        print("potential.page[0].maxbookmarksupply is " + str(potential.page[0].maxbookmarksupply))
 
         if not curserial_num:
             try:
@@ -1063,9 +969,109 @@ def emboss(request):
 def manifest(request):
     return FileResponse(open("/home/john/bakerydemo/bakerydemo/static/manifest.webmanifest", "rb"), content_type="application/json")
 
-def index(request):
-    return _render(request, request, "art/index.html");
-
 def serviceworker(request):
     return FileResponse(open("/home/john/bakerydemo/bakerydemo/static/js/service-worker.js", "rb"), content_type="application/javascript")
 
+def getContentPdf(arttype, curserial_num, datamine, redirectCount, daedalusToken, msg, signature, tokenid, potential, request):
+    arthtmlfilename = 'art/datamines/' + datamine + '/' + datamine + '.nft/' + 'index.html.' +  curserial_num + '.html'
+    curhtmlfilename = '/home/john/bakerydemo/bakerydemo/' + arthtmlfilename
+
+    if not potential.page[0].usejrreditor:  # Try the mass media way.
+        try:
+            f = gzip.open(curhtmlfilename, 'rb')
+            html = f.read()
+            f.close()
+        except:
+            retjson = json.dumps(potential.__dict__, default=lambda o: 'coded')
+            print("return error page message")
+            return "EROOR"
+
+    else:  #### JRREDITOR ####
+        if True:
+            pass
+            #if not os.path.exists('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine):
+                #lock = FileLock("/tmp/high_ground.txt.lock")
+                #with lock:
+                    #shutil.move('/home/john/' +datamine, '/mnt/media_dir')
+                    #os.symlink('/mnt/media_dir' + datamine, '/home/john/' + datamine)
+                    #os.remove('/tmp/high_ground.txt.lock')
+
+
+            if True:
+                jrreditor_artname = 'art/datamines/' + datamine + "/jrre-index.html.nft/index.html."+curserial_num+".html"
+                if not exists(jrreditor_artname):
+                    potential.warning = potential.warning + "The jrreditor art file does not exist. "
+                    print("The jrreditor art file does not exist. ")
+                    
+                    jrreditor_get_art_html(potential, curserial_num, "book")   # This builds and saves the precoded html file.
+
+
+                
+
+                bmsupply = getTotalBMTokens(potential, datamine)
+                print("BMSUPPLY IS " + str(bmsupply))
+                print("int(curserial_num) - 1 is " + str(int(curserial_num)))
+
+                if 0 == bmsupply:  ## FIXME should use a template for this..
+                    f = open('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine + '/jrre-index.html.nft/index.html.0.html', "wb")
+                    html = "<html></head><body><h1>Welcome!</h1>" + json.dumps(potential.__dict__, default=lambda o: 'coded') + "</body></html>"
+                    html = html.encode('utf-8')
+                    # html = recodehtml(potential, html, datamine, bmsupply)
+                    f.write(html)
+                    f.close()
+
+                    curserial_num = "0"  # The curserial is 1 but we will fake it out 
+                    jrreditor_artname = 'art/datamines/' + datamine + "/jrre-index.html.nft/index.html."+curserial_num+".html"
+
+                                                                                        # Need to add this in as well: or bmsupply == potential.page[0].maxbookmarksupply:
+                elif bmsupply - 1 == int(curserial_num) or ownTheToken(potential, datamine, msg, signature, tokenid, daedalusToken):
+
+                    #f = open('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine + '/jrre-index.html.nft/index.html.' +  curserial_num + '.html', "w")
+
+                    #f = gzip.open("/home/john/" + datamine + "/" + datamine + ".nft/index.html." + curserial_num, 'wb')
+                    f = gzip.open("/mnt/media_dir/" + datamine + "/jrre-index.html.nft/index.html." + curserial_num, 'rb')
+                    html = f.read()
+                    f.close()
+
+                    # We have the art!!! First time on the jrreditor side of the house.
+                    html = recodehtml(potential, html, datamine, curserial_num)
+                    print(str(datamine))
+                    print(str(curserial_num))
+                    print("------------------------------------")
+                    print(html)
+                    f = open('/home/john/bakerydemo/bakerydemo/templates/art/datamines/' + datamine + '/jrre-index.html.nft/index.html.' +  curserial_num + '.html', "wb")
+                    f.write(html)
+                    f.close()
+
+                else:
+                    if redirectCount < 3:
+                        # return myredirect(request, '/art/?' + 'type=default&redirect=' + str(redirectCount) + '&datamine=' + datamine)
+                        return arttype
+
+                    this_is_bad_jrreditor_exeception_we_shouldreturn_potential_maybe
+                    pass
+
+
+                myrender = _render(request, jrreditor_artname, get_serials(curserial_num, potential=potential))
+                
+                # myrender = get_serials(curserial_num, potential=potential)
+                f = open(getmagiccachefile(datamine, curserial_num, arttype), 'wb')
+                pickle.dump(myrender, f)
+                f.close()
+
+                return myrender
+                
+                try:
+                    pass
+                except:
+                    retjson = calculate_project_potential(datamine, curserial_num, "book", returntype="json", error_fingerprint="Can't do something in jrreditor")
+                    # return _render(request, 'art/landingpage1.html', context={'json': SafeString(retjson)})
+                    return Response(arttype)
+
+                return html
+            else:
+                retjson = json.dumps(potential.__dict__, default=lambda o: 'coded')
+                # return _render(request, 'art/landingpage1.html', context={'json': SafeString(retjson)})
+                return Response(arttype)
+
+    return "user encrpyto"
