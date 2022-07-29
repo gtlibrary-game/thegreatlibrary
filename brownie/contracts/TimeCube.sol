@@ -472,7 +472,7 @@ contract TimeCube is ReentrancyGuardUpgradeable {
                 emit Unsummoned(_hId, _whatId);
         }
 
-	function diceTheItem(HeroItem memory _item, uint256 _entropy, uint _power) internal returns(HeroItem memory) {
+	function diceTheItem(HeroItem memory _item, uint256 _entropy, uint _power, uint _gasReward) internal returns(HeroItem memory) {
 		uint powerMult = spells.log2(_power) + 1;
 
 		_item.level = powerMult;
@@ -555,7 +555,8 @@ contract TimeCube is ReentrancyGuardUpgradeable {
 		uint256 newItem = items.itemMint(address(hero), _hId, address(this), _slot);
 		HeroItem memory item = items.getItemStats(newItem);
 		item.slot = _slot;
-                diceTheItem(item, uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, heat, effect))), _totalLvl / (uint(MAX_CUBE_SLOTS) + 1));
+		(uint256 gasReward, ) = BookTradable(hero.getNBT()).getGasRewards(hero.getSpawn(_hId));
+                diceTheItem(item, uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, heat, effect))), _totalLvl / (uint(MAX_CUBE_SLOTS) + 1), gasReward);
 		item.effect |= effect;
                 items.setItemStats(newItem, item);
 
@@ -565,11 +566,13 @@ contract TimeCube is ReentrancyGuardUpgradeable {
 		require(msg.sender == hero.ownerOf(_hId) || cCA == msg.sender || isAddon[msg.sender], "You don't own that hero.");
 		loot.burnFrom(msg.sender, _what, _amount);
 		
+		(uint256 gasReward, ) = BookTradable(hero.getNBT()).getGasRewards(hero.getSpawn(_hId));
+		
 		uint256 newItem = items.itemMint(address(hero), _hId, msg.sender, _slot);
 
 		HeroItem memory item = items.getItemStats(newItem);
 		item.slot = _slot;
-		diceTheItem(item, uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, heat, _what, _amount))), _amount);
+		diceTheItem(item, uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, heat, _what, _amount))), _amount, gasReward);
 		items.setItemStats(newItem, item);
 
 		emit Transmute(newItem, _slot, _what, _amount, 0, 0,  0, 0,  0, 0);
@@ -578,6 +581,7 @@ contract TimeCube is ReentrancyGuardUpgradeable {
 	function transmute(uint256 _hId, int _slot, uint _time, uint _what, uint _amount, uint _w2, uint _a2) public {
                 require(msg.sender == hero.ownerOf(_hId) || cCA == msg.sender || isAddon[msg.sender], "You don't own that hero.");
 		//_burn(msg.sender, _hId, _time);
+		(uint256 gasReward, ) = BookTradable(hero.getNBT()).getGasRewards(hero.getSpawn(_hId));
                 loot.burnFrom(msg.sender, _what, _amount);
                 loot.burnFrom(msg.sender, _w2, _a2);
 
@@ -585,7 +589,7 @@ contract TimeCube is ReentrancyGuardUpgradeable {
 
 		HeroItem memory item = items.getItemStats(newItem);
 		item.slot = _slot;
-		item = diceTheItem(item, uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, heat, _what, _amount, _w2, _a2))), _amount + _a2);
+		item = diceTheItem(item, uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, heat, _what, _amount, _w2, _a2))), _amount + _a2, gasReward);
                 items.setItemStats(newItem, item);
 
                 emit Transmute(newItem, _slot, _what, _amount, _w2, _a2,  0, 0,  0, 0);
