@@ -1,7 +1,15 @@
+####
+#### Any contract added to the library may have to be added here so add contracts wisely.
+####
 import time
 import pytest
 import logging
 from brownie import accounts
+FLAG_IS_NPC=10000
+DAEDALUSCLASS=134
+DAEDALUS=16
+ARCANE_ORB=1
+HERO_MINT_MAX=16
 
 LOG = logging.getLogger(__name__)
 
@@ -14,7 +22,6 @@ from scripts.helpful_scripts import encode_function_data
 @pytest.fixture(scope="session")
 def HEROS2(CC, PP, MP, BookTradable, Hero, spells, loot, items):
     LOG.info("test_hero")
-
 
     # address _NBT, string memory _prompt, uint256 _tokenId
     tx = PP.newBookContract("exampleNBT", "BTtestNBT", MP.address, "urlgoeshere", True, maxint, OneCC, 1, accounts[0].address)
@@ -107,7 +114,6 @@ def loot(CC, BaseLoot, proxyAdmin, TransparentUpgradeableProxy, Contract, spells
 
     return lootProxy
 
-ARCANE_ORB = 1
 
 def test_arcanist(HEROS, spells, arcanist, daedalus):
     LOG.info("testing the arcanist: " + str(arcanist));
@@ -676,5 +682,77 @@ def cc_dex(CC, cc_initial_balance, cc_warm_dex, ccTotalSupplyStart):
     #CC.dexCCIn(10000000000000000000000, {'from': accounts[0].address})
 
 
+
+#import time
+#import pytest
+#import logging
+#from brownie import accounts
+
+#from allHeros import HEROS
+#from greatLibrary import CC, MP, PP, example_bookmark, proxyAdmin
+@pytest.fixture(scope="session")
+def HEROS(CC, PP, MP, BookTradable, Hero, spells, loot, items, example_bookmark):
+    ##address _cCA, address _cultureCoin, address _nbt, address _registryAddress
+    hero = accounts[0].deploy(Hero, accounts[0].address, CC.address, example_bookmark.address, MP.address, spells.address, items.address)
+    LOG.info("The heros are here: " + str(hero))
+
+    CC.setAddon(hero.address, True, {'from': accounts[0].address})
+    hero.setAddon(spells.address, True, {'from': accounts[0].address})
+    hero.setAddon(loot.address, True, {'from': accounts[0].address})
+    hero.setAddon(items.address, True, {'from': accounts[0].address})
+    items.setAddon(hero.address, True, {'from': accounts[0].address})
+
+    return hero
+#from itemsSpellsLoot import  items, spells, loot
+
+#LOG = logging.getLogger(__name__)
+
+#OneCC = 1000000000000000000   # This number is equal to 1 Culture Coin
+#maxint = 115792089237316195423570985008687907853269984665640564039457584007913129639935
+#deployAmount = 2 * 210100027 * OneCC
+
+#from scripts.helpful_scripts import encode_function_data
+
+@pytest.fixture(scope="session")
+def heros(CC, PP, HEROS, spells):
+    nbt = HEROS.getNBT();
+
+    for i in range(1, HERO_MINT_MAX):
+        LOG.info("i: " + str(i))
+        HEROS.heroMint(1, accounts[0].address, i, 0, {'from': accounts[0].address})
+        spells.setState(HEROS.address, i, FLAG_IS_NPC, True, {'from': accounts[0].address});
+
+    tx = HEROS.heroMint(1, accounts[0].address, DAEDALUSCLASS, 0, {'from': accounts[0].address})
+    LOG.info("tx: " + str(tx))
+    tx.info()
+
+    spells.setState(HEROS.address, DAEDALUS, FLAG_IS_NPC, True, {'from': accounts[0].address});
+
+    return HEROS
+
+@pytest.fixture(scope="session")
+def timecube(TimeCube, proxyAdmin, TransparentUpgradeableProxy, Contract, CC, heros, spells, items, loot):
+
+    TCImpl = accounts[0].deploy(TimeCube)
+
+    ## address _cCA, address _cultureCoin, address _hero, address _spells, address _loot, address _items, string memory _uri
+    encoded_initializer_function = encode_function_data(TCImpl.initialize, accounts[0].address, CC.address, heros.address, spells.address, loot.address, items.address, "Uri")
+
+    proxy = accounts[0].deploy(TransparentUpgradeableProxy,
+        TCImpl.address,
+        proxyAdmin,
+        encoded_initializer_function
+    )
+
+    tcProxy = Contract.from_abi("TimeCube", proxy.address, TimeCube.abi)
+    LOG.info("timeCube: " + str(tcProxy.address))
+
+    CC.setAddon(tcProxy.address, True, {'from': accounts[0].address})
+    items.setAddon(tcProxy.address, True, {'from': accounts[0].address})
+    loot.setAddon(tcProxy.address, True, {'from': accounts[0].address})
+    spells.setAddon(tcProxy.address, True, {'from': accounts[0].address})
+    heros.setAddon(tcProxy.address, True, {'from': accounts[0].address})
+
+    return tcProxy
 
 
