@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{bf40c32a-6ece-07f7-ba01-ac3f02e02765}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask", "UniTask.csproj", "{89afd7d3-29a6-ca20-8d31-32d66800fb30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeanTransition", "LeanTransition.csproj", "{2d2b7212-9433-554e-a6ba-15c8ee9ecba3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeanGUI", "LeanGUI.csproj", "{30020aa5-8a0f-4c71-fb96-a590d4e27f6e}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.Linq", "UniTask.Linq.csproj", "{d1143a85-d06f-53cf-4c7b-e7ebee9d8a69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityGifDecoder", "UnityGifDecoder.csproj", "{7a623186-9075-cd6d-ba58-5f1b8d831620}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeanCommon", "LeanCommon.csproj", "{cba61fd2-25f1-6bdb-b5ba-47bb38a8f6eb}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.DOTween", "UniTask.DOTween.csproj", "{b0fda001-b491-b314-ba2e-c91046406d37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeMonkey_HealthSystem", "CodeMonkey_HealthSystem.csproj", "{e94c37a7-1bc1-c4e1-a996-a6ffc9e5b583}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DE_ALP8310Controller", "DE_ALP8310Controller.csproj", "{ad0e58e3-134a-17c0-0f43-1ea16a24fa31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.TextMeshPro", "UniTask.TextMeshPro.csproj", "{2df8b145-85a9-c618-4f5b-b8dceae6adb1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "endel.nativewebsocket", "endel.nativewebsocket.csproj", "{90cf2d49-898f-3d88-44e1-b25cd9e5355f}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DE_ALP8310Controller.Global.Editor", "DE_ALP8310Controller.Global.Editor.csproj", "{74fa9a56-0c43-416a-b7a2-a64e138266a5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.Addressables", "UniTask.Addressables.csproj", "{74e799d1-948c-bd9d-3dfd-1233f9e39032}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniTask.Editor", "UniTask.Editor.csproj", "{e4d7c758-db88-90e8-0843-8c64b2959fba}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{3116ad66-2b1e-fd2c-c69e-e779ba05780b}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeanTransition.Editor", "LeanTransition.Editor.csproj", "{435f0443-20d3-fac0-0863-ec04eaafc4b2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeMonkey_HealthSystem_Editor", "CodeMonkey_HealthSystem_Editor.csproj", "{30f620f1-2171-065f-c5e3-f59b32894d9e}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{bf40c32a-6ece-07f7-ba01-ac3f02e02765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{bf40c32a-6ece-07f7-ba01-ac3f02e02765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89afd7d3-29a6-ca20-8d31-32d66800fb30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89afd7d3-29a6-ca20-8d31-32d66800fb30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2d2b7212-9433-554e-a6ba-15c8ee9ecba3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2d2b7212-9433-554e-a6ba-15c8ee9ecba3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30020aa5-8a0f-4c71-fb96-a590d4e27f6e}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30020aa5-8a0f-4c71-fb96-a590d4e27f6e}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{d1143a85-d06f-53cf-4c7b-e7ebee9d8a69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{d1143a85-d06f-53cf-4c7b-e7ebee9d8a69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7a623186-9075-cd6d-ba58-5f1b8d831620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7a623186-9075-cd6d-ba58-5f1b8d831620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{cba61fd2-25f1-6bdb-b5ba-47bb38a8f6eb}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{cba61fd2-25f1-6bdb-b5ba-47bb38a8f6eb}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{b0fda001-b491-b314-ba2e-c91046406d37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{b0fda001-b491-b314-ba2e-c91046406d37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{e94c37a7-1bc1-c4e1-a996-a6ffc9e5b583}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{e94c37a7-1bc1-c4e1-a996-a6ffc9e5b583}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ad0e58e3-134a-17c0-0f43-1ea16a24fa31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ad0e58e3-134a-17c0-0f43-1ea16a24fa31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2df8b145-85a9-c618-4f5b-b8dceae6adb1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2df8b145-85a9-c618-4f5b-b8dceae6adb1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90cf2d49-898f-3d88-44e1-b25cd9e5355f}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90cf2d49-898f-3d88-44e1-b25cd9e5355f}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74fa9a56-0c43-416a-b7a2-a64e138266a5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74fa9a56-0c43-416a-b7a2-a64e138266a5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74e799d1-948c-bd9d-3dfd-1233f9e39032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74e799d1-948c-bd9d-3dfd-1233f9e39032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{e4d7c758-db88-90e8-0843-8c64b2959fba}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{e4d7c758-db88-90e8-0843-8c64b2959fba}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3116ad66-2b1e-fd2c-c69e-e779ba05780b}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3116ad66-2b1e-fd2c-c69e-e779ba05780b}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{435f0443-20d3-fac0-0863-ec04eaafc4b2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{435f0443-20d3-fac0-0863-ec04eaafc4b2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30f620f1-2171-065f-c5e3-f59b32894d9e}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30f620f1-2171-065f-c5e3-f59b32894d9e}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
