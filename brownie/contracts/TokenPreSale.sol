@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 
-import "openzeppelin-solidity/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 interface IERC20 {
     function totalSupply() external view returns (uint256);
@@ -84,22 +84,47 @@ abstract contract Ownable is Context {
         _owner = newOwner;
     }
 }
+// vesting contract interface
+interface IVesting {
+    function setVestingAllocation(uint256) external;
+    function addNewRecipient(address, uint256, bool) external;
+    function startVesting(uint256) external;
+    function getLocked(address) external view returns (uint256);
+    function getWithdrawable(address) external view returns (uint256);
+    function withdrawToken(address) external returns (uint256);
+    function getVested(address) external view returns (uint256);
+}
 
 contract TokenPreSale is Ownable {
     using SafeMath for uint256;
     // address of admin
     IERC20 public token;
     // token price variable
-    uint256 public tokenprice;
+    uint256 public tokenchangeRate;
     // count of token sold vaariable
     uint256 public totalsold; 
 
     uint256 public START; // start ICO time blocktime 
-    uint256 public DAYS; // During Days days
+    uint256 public PERIOD; // During Days days
     bool public endStatus = false;
-     
+
+    IVesting private vestingContract; // Vesting Contract
+    
+    /// presalebuyer object
+    struct PresaleBuyer {
+        uint256 amountDepositedAVAX; // Avax amount per recipient.
+        uint256 amountCCoin; // Rewards token that needs to be vested.
+    }
+
+    mapping(address => PresaleBuyer) public recipients; // Presale Buyers
+
+
     event Sell(address sender,uint256 totalvalue); 
     
+    function setVestingContractAddress(address _vestingContract) external onlyOwner {
+        require (_vestingContract != address(0x00));
+        vestingContract = IVesting(_vestingContract);
+    }
     /**
     * whenSaleIsActive
     * @dev ensures that the contract is still active
@@ -110,38 +135,47 @@ contract TokenPreSale is Ownable {
         _;
     }
     // constructor 
-    constructor(address _tokenaddress, uint256 _tokenvalue, uint _startTime, uint _duringDays){
-        tokenprice = _tokenvalue;
+    constructor(address _tokenaddress, uint _tokenChangeRate, uint _startTime, uint _duringDays){
+        tokenchangeRate = _tokenChangeRate;
         token  = IERC20(_tokenaddress);
         START = _startTime;
-        DAYS = _duringDays;
+        PERIOD = _duringDays;
     }
    
     // buyTokens function
-    function buyTokens() public whenSaleIsActive payable{
+    function buyTokens() public whenSaleIsActive payable {
         address buyer = msg.sender;
-        uint256 bnbAmount = msg.value;
+        uint256 avaxAmount = msg.value;
 
         // check if the contract has the tokens or not
-        require(token.balanceOf(address(this)) >= bnbAmount * tokenprice,'the smart contract dont hold the enough tokens');
-        // transfer the token to the user
-        token.transfer(buyer, bnbAmount * tokenprice);
-        // increase the token sold
-        totalsold += bnbAmount * tokenprice;
-        // emit sell event for ui
-        emit Sell(buyer, bnbAmount * tokenprice);
-    }
+        // require(token.balanceOf(address(vestingContract)) >= avaxAmount * tokenchangeRate,'the smart contract dont hold the enough tokens');
+        require(address(vestingContract) != address(0x00), "Withdraw: Set vesting contract!");
 
+        uint256 newDepositedAvax = recipients[msg.sender].amountDepositedAVAX.add(avaxAmount);
+        uint256 newDepositedCCoin = avaxAmount.mul(tokenchangeRate).div(1000);
+ 
+        recipients[msg.sender].amountDepositedAVAX = newDepositedAvax;
+        recipients[msg.sender].amountCCoin = recipients[msg.sender].amountCCoin.add(newDepositedCCoin);
+        vestingContract.addNewRecipient(msg.sender, recipients[msg.sender].amountCCoin, true);
+
+        // // transfer the token to the user
+        // token.transfer(buyer, avaxAmount * tokenchangeRate);
+        // increase the token sold
+        totalsold += newDepositedCCoin;
+        // emit sell event for ui
+        emit Sell(buyer, newDepositedCCoin);
+    }
+    // get avax amount from current user
     function getAvaxBal(address _addr) public view returns(uint256) {
         return address(_addr).balance;
     }
 
-    // view native token amount
-    function getBalance() public view returns (uint256) {
+    // view native token (avax) amount on this contract
+    function getBalanceofAvax() public view returns (uint256) {
         return address(this).balance;
     }
 
-    function getCuurentTime() public view returns(uint256) {
+    function getCurrentTime() public view returns(uint256) {
         return block.timestamp;
     }
     
@@ -150,13 +184,25 @@ contract TokenPreSale is Ownable {
     * @dev function that delays ICO during days
     **/
     function delay_Duration(uint256 _delayDays) public onlyOwner {
-        DAYS = DAYS.add(_delayDays);
+        require(!endStatus && block.timestamp <= START.add(PERIOD.mul(1 days)), "can't delay duration");
+        PERIOD = PERIOD.add(_delayDays);
     }
 
     function setStartTime(uint256 _startTime) public onlyOwner {
         START = _startTime;
     }
 
+    /**
+     * @dev function that sets price rate (avax : CC)
+     */
+    function setPriceRate(uint rate) external onlyOwner {
+        tokenchangeRate = rate.div(1000);
+    }
+    
+    function setCCoinTokenAddress(address _CCoinToken) external onlyOwner {
+        require (_CCoinToken != address(0x00), "Already CCoinToken address is set.");
+        token = IERC20(_CCoinToken);
+    }
     /**
     * isActive
     * @dev Determins if the contract is still active
@@ -165,7 +211,7 @@ contract TokenPreSale is Ownable {
         return (
             endStatus == false && 
             block.timestamp >= START && // Must be after the START date
-            block.timestamp <= START.add(DAYS.mul(1 days)) // Must be before the end date
+            block.timestamp <= START.add(PERIOD.mul(1 days)) // Must be before the end date
         );
     }
 
@@ -176,7 +222,6 @@ contract TokenPreSale is Ownable {
     function set_EndStatus(bool status) public onlyOwner {
         endStatus = status;
     }
-
 
     // withdraw native token
     function withdraw(address to) external onlyOwner {
