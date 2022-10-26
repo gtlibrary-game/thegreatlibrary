@@ -12,19 +12,19 @@ cultureCoinAddress = os.environ['cultureCoinAddress']
 print("Using CC address of ", cultureCoinAddress)
 cCICOPrice = os.environ['cCICOPrice']
 print("Using CC Price:", cCICOPrice)
-ICOStart = os.environ['ICOStart']
-print("using ICOStart:", ICOStart)
-ICODays = os.environ['ICODays']
-print("using ICODays:", ICODays)
+iCOStart = os.environ['iCOStart']
+print("using iCOStart:", iCOStart)
+iCODays = os.environ['iCODays']
+print("using iCODays:", iCODays)
 
-ICOStart = eval(ICOStart)
-print("ICOStart:", ICOStart)
+iCOStart = eval(iCOStart)
+print("iCOStart:", iCOStart)
 
 epoch_time = datetime(1970, 1, 1)
-delta = (ICOStart - epoch_time)
+delta = (iCOStart - epoch_time)
 print('Datetime to Seconds since epoch:', delta.total_seconds())
-ICOStart = str(int(delta.total_seconds()))
-print("Timestamp for start of ico:", ICOStart)
+iCOStart = str(int(delta.total_seconds()))
+print("Timestamp for start of ico:", iCOStart)
 
 def main():
     account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
@@ -45,7 +45,7 @@ def main():
 
     TokenPreSale.deploy(cultureCoinAddress,
                                     cCICOPrice, 
-				    ICOStart, ICODays, 
+				    iCOStart, iCODays, 
                                     {'from': account}) # , "gas_price": gasPrice})
 
     print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
