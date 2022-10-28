@@ -38,6 +38,9 @@ const myItemsAddress=process.env.myItemsAddress;
 const heroAddress=process.env.heroAddress;
 const timeCubeAddress=process.env.timeCubeAddress;
 
+const tokenPreSale=process.env.tokenPreSale;
+const vestingContract=process.env.vestingContract;
+
 const Moralis = require('moralis/node');
 const Web3 = require('web3');
 const fs = require('fs')
@@ -556,6 +559,24 @@ async function safeTransferToken(contractid, oldOwner, newOwner, tokenId) {
         const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         console.log(retval);
 
+}
+
+async function fundICOPreSale(_amountCC) {
+	console.log("Culturecoin: ", cultureCoinAddress);
+	console.log("VestingContract: ", vestingContract);
+	const contract = new Contract(CC_abi, cultureCoinAddress);
+	const nonceOperator = web3.eth.getTransactionCount(cCA);
+	const functionCall = contract.methods.transfer(vestingContract, _amountCC).encodeABI();
+        transactionBody = {
+                to: cultureCoinAddress,
+                nonce:nonceOperator,
+                data:functionCall,
+                gas:premiumGas,
+                gasPrice:gw10
+        }
+        signedTransaction = await web3.eth.accounts.signTransaction(transactionBody,cCAPrivateKey);
+        const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(retval);
 }
 
 async function retireMsg(msg, yesNo) {
@@ -1367,6 +1388,8 @@ module.exports.recoverXMTSPFromCC = recoverXMTSPFromCC;
 module.exports.testRecoverXMTSPFromCC = testRecoverXMTSPFromCC;
 module.exports.cCAPrivateKeyEncrypted = cCAPrivateKeyEncrypted;
 
+
+module.exports.fundICOPreSale = fundICOPreSale;
 
 
 const encrypt = (secretKey, text) => {
