@@ -65,6 +65,9 @@ const items_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/MyIt
 const hero_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/Hero.json', 'utf8'));
 const TC_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/TimeCube.json', 'utf8'));
 
+const vest_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/Vesting.json', 'utf8'));
+const presale_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/TokenPreSale.json', 'utf8'));
+
 const premiumGas = process.env.premiumGas;
 const regularGas = process.env.regularGas;
 
@@ -569,6 +572,38 @@ async function fundICOPreSale(_amountCC) {
 	const functionCall = contract.methods.transfer(vestingContract, _amountCC).encodeABI();
         transactionBody = {
                 to: cultureCoinAddress,
+                nonce:nonceOperator,
+                data:functionCall,
+                gas:premiumGas,
+                gasPrice:gw10
+        }
+        signedTransaction = await web3.eth.accounts.signTransaction(transactionBody,cCAPrivateKey);
+        const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(retval);
+}
+
+async function setVestingContract() {
+	const contract = new Contract(presale_abi, tokenPreSale);
+        const nonceOperator = web3.eth.getTransactionCount(cCA);
+        const functionCall = contract.methods.setVestingContractAddress(vestingContract).encodeABI();
+        transactionBody = {
+                to: tokenPreSale,
+                nonce:nonceOperator,
+                data:functionCall,
+                gas:premiumGas,
+                gasPrice:gw10
+        }
+        signedTransaction = await web3.eth.accounts.signTransaction(transactionBody,cCAPrivateKey);
+        const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(retval);
+}
+
+async function setVestingAllocation() {
+        const contract = new Contract(vest_abi, vestingContract);
+        const nonceOperator = web3.eth.getTransactionCount(cCA);
+        const functionCall = contract.methods.setVestingAllocation().encodeABI();
+        transactionBody = {
+                to: vestingContract,
                 nonce:nonceOperator,
                 data:functionCall,
                 gas:premiumGas,
@@ -1390,6 +1425,8 @@ module.exports.cCAPrivateKeyEncrypted = cCAPrivateKeyEncrypted;
 
 
 module.exports.fundICOPreSale = fundICOPreSale;
+module.exports.setVestingContract = setVestingContract;
+module.exports.setVestingAllocation = setVestingAllocation;
 
 
 const encrypt = (secretKey, text) => {
