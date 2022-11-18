@@ -379,7 +379,7 @@ pip3 install -r requirements/base.txt
 
 sudo apt install python3.8-venv
 sudo apt-get install pipx
-pipx install eth-brownie
+pipx install eth-brownie==1.19.0
 pipx ensurepath
 source ~/.bashrc
 
