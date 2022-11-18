@@ -38,6 +38,9 @@ const myItemsAddress=process.env.myItemsAddress;
 const heroAddress=process.env.heroAddress;
 const timeCubeAddress=process.env.timeCubeAddress;
 
+const tokenPreSale=process.env.tokenPreSale;
+const vestingContract=process.env.vestingContract;
+
 const Moralis = require('moralis/node');
 const Web3 = require('web3');
 const fs = require('fs')
@@ -61,6 +64,9 @@ const BL_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/BaseLoo
 const items_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/MyItems.json'), 'utf8');
 const hero_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/Hero.json', 'utf8'));
 const TC_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/TimeCube.json', 'utf8'));
+
+const vest_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/Vesting.json', 'utf8'));
+const presale_abi = JSON.parse(fs.readFileSync('/home/john/bakerydemo/brownie/TokenPreSale.json', 'utf8'));
 
 const premiumGas = process.env.premiumGas;
 const regularGas = process.env.regularGas;
@@ -556,6 +562,56 @@ async function safeTransferToken(contractid, oldOwner, newOwner, tokenId) {
         const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         console.log(retval);
 
+}
+
+async function fundICOPreSale(_amountCC) {
+	console.log("Culturecoin: ", cultureCoinAddress);
+	console.log("VestingContract: ", vestingContract);
+	const contract = new Contract(CC_abi, cultureCoinAddress);
+	const nonceOperator = web3.eth.getTransactionCount(cCA);
+	const functionCall = contract.methods.transfer(vestingContract, _amountCC).encodeABI();
+        transactionBody = {
+                to: cultureCoinAddress,
+                nonce:nonceOperator,
+                data:functionCall,
+                gas:premiumGas,
+                gasPrice:gw10
+        }
+        signedTransaction = await web3.eth.accounts.signTransaction(transactionBody,cCAPrivateKey);
+        const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(retval);
+}
+
+async function setVestingContract() {
+	const contract = new Contract(presale_abi, tokenPreSale);
+        const nonceOperator = web3.eth.getTransactionCount(cCA);
+        const functionCall = contract.methods.setVestingContractAddress(vestingContract).encodeABI();
+        transactionBody = {
+                to: tokenPreSale,
+                nonce:nonceOperator,
+                data:functionCall,
+                gas:premiumGas,
+                gasPrice:gw10
+        }
+        signedTransaction = await web3.eth.accounts.signTransaction(transactionBody,cCAPrivateKey);
+        const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(retval);
+}
+
+async function setVestingAllocation() {
+        const contract = new Contract(vest_abi, vestingContract);
+        const nonceOperator = web3.eth.getTransactionCount(cCA);
+        const functionCall = contract.methods.setVestingAllocation().encodeABI();
+        transactionBody = {
+                to: vestingContract,
+                nonce:nonceOperator,
+                data:functionCall,
+                gas:premiumGas,
+                gasPrice:gw10
+        }
+        signedTransaction = await web3.eth.accounts.signTransaction(transactionBody,cCAPrivateKey);
+        const retval = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        console.log(retval);
 }
 
 async function retireMsg(msg, yesNo) {
@@ -1367,6 +1423,10 @@ module.exports.recoverXMTSPFromCC = recoverXMTSPFromCC;
 module.exports.testRecoverXMTSPFromCC = testRecoverXMTSPFromCC;
 module.exports.cCAPrivateKeyEncrypted = cCAPrivateKeyEncrypted;
 
+
+module.exports.fundICOPreSale = fundICOPreSale;
+module.exports.setVestingContract = setVestingContract;
+module.exports.setVestingAllocation = setVestingAllocation;
 
 
 const encrypt = (secretKey, text) => {
