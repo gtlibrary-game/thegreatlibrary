@@ -25,6 +25,8 @@ from rest_framework import routers
 # from bakerydemo.base import views
 #from froala_editor import views
 
+from django.views.decorators.csrf import csrf_exempt
+
 urlpatterns = [
     path('django-admin/', admin.site.urls),
 
@@ -32,6 +34,8 @@ urlpatterns = [
     path('documents/', include(wagtaildocs_urls)),
 
     path('search/', search_views.search, name='search'),
+
+    url('^art/myopenai/', csrf_exempt(art_views.myopenai), name='myopenai'),
 
     url('^art/serialtest/', art_views.serialtest, name='serialtest'),
     url('^art/style.css', art_views.styles, name='styles'),

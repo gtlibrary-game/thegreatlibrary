@@ -8,12 +8,20 @@ import pickle
 from os.path import exists
 import requests
 import urllib
+import openai
+
+#print(dir(openai))
+
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from filelock import Timeout, FileLock
 
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import FileResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect
 
 from django.template import Context, Template
@@ -21,6 +29,7 @@ from django.template import Context, Template
 from bakerydemo.breads.models import BreadPage
 from django.utils.safestring import SafeString
 from django.utils.safestring import mark_safe
+
 
 import bakerydemo.breads.models as books
 from bakerydemo.art.study import Study
@@ -33,6 +42,8 @@ from bakerydemo.art.moralis import Moralis
 moralis = Moralis()
 
 #os.environ['DJANGO_SETTINGS_MODULE']
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 securePort = os.environ['securePort']
 secureHost = os.environ['secureHost']
 cCAPrivateKey = os.environ['cCAPrivateKey']
@@ -1080,3 +1091,26 @@ def index(request):
 
 def serviceworker(request):
     return FileResponse(open("/home/john/bakerydemo/bakerydemo/static/js/service-worker.js", "rb"), content_type="application/javascript")
+
+@api_view(['POST', ])
+def myopenai(request):
+    print(request.body)
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    content = body['message']
+
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt="Rewrite the following to highlight any grammar, spelling, or clarity issues with the narrative:" + content,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    print(response)
+
+    return JsonResponse({"content":response["choices"][0]["text"].lstrip(), "type":"message"}, safe=False)
+

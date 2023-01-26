@@ -256,6 +256,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ['https://docs.google.com']
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 ROOT_URLCONF = 'bakerydemo.urls'
