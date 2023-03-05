@@ -9,4 +9,4 @@ Prerequisite :
 
 Run Command :
 
-python3 chatGPT.py
+python3 nrchatGPT.py
