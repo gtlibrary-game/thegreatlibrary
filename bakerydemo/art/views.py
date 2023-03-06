@@ -30,6 +30,7 @@ from bakerydemo.breads.models import BreadPage
 from django.utils.safestring import SafeString
 from django.utils.safestring import mark_safe
 
+from requests_toolbelt.multipart import decoder
 
 import bakerydemo.breads.models as books
 from bakerydemo.art.study import Study
@@ -1113,4 +1114,116 @@ def myopenai(request):
     print(response)
 
     return JsonResponse({"content":response["choices"][0]["text"].lstrip(), "type":"message"}, safe=False)
+
+def generate_chat_response(message_arr, context):
+    thread_stub = {}
+    if context == "":
+        thread_stub = {"role": "system", "content": "I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] > Your job is to polish my text so it is ready to go to print. > Hint: 'Pretty print the text.'" + " :: " + repr(get_seed())}
+    else:
+        thread_stub = {"role": "system", "content": context}
+
+    thread_message = [thread_stub] + message_arr
+    print("thread_message: " + str(thread_message))
+    completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=thread_message, temperature=0.0)
+    return completion.choices[0].message
+
+def get_seed():
+    return open("/home/john/bakerydemo/chatGPT/dkCHAT.py", "r").read()
+
+ESCAPE_KEYS = ["Exit"]
+
+
+def content_headers_get_name(example_object):
+    #example_object = {b'Content-Disposition': b'form-data; name="csrfmiddlewaretoken"'}
+
+    # Convert the object keys and values to strings
+    string_object = {key.decode(): value.decode() for key, value in example_object.items()}
+
+    # Split the value of Content-Disposition by semicolon and space
+    disposition_parts = string_object['Content-Disposition'].split('; ')
+
+    # Find the part that starts with 'name='
+    name_part = [part for part in disposition_parts if part.startswith('name=')][0]
+
+    # Get the value of name by removing the 'name=' prefix and the surrounding quotes
+    name_value = name_part.split('=')[1].strip('"')
+
+    #print(name_value)  # Output: csrfmiddlewaretoken
+    return(name_value)
+
+
+@api_view(['POST', ])
+def chat(request):
+    if request.method == 'POST':
+        #print(dir(request.body))
+        print(request.META['CONTENT_TYPE'])
+        body_unicode = str(request.body.decode('utf-8'))
+        print("body_unicode, " + body_unicode)
+
+        message_array = [] # request.session.get('message_array', [])
+
+        user_input = ""
+        context = ""
+        if request.META['CONTENT_TYPE'] in ["application/json", "multipart/form-data"]:
+            user_input = body_unicode;
+        else:
+            multipart_data = decoder.MultipartDecoder(body_unicode.encode('utf-8'), request.META['CONTENT_TYPE'])
+            for part in multipart_data.parts:
+                content = str(part.content.decode("utf-8"))
+                print("PART: " + str(part.content.decode("utf-8")))  # Alternatively, part.text if you want unicode
+                print(part)
+                print(dir(part))
+                print("PART HEADERS: " + str(part.headers))
+                print(dir(part.headers))
+                print("name: " + content_headers_get_name(part.headers))
+                #print(part.header.name)
+
+                name = content_headers_get_name(part.headers)
+                if name == "csrfmiddlewaretoken":
+                    print("DEBUG: csrfmiddlewaretoken")
+                    continue
+
+                if name == "user_input":
+                    user_input = str(part.content.decode("utf-8"))
+                    print("USER INPUT: " + user_input)
+                    continue
+
+                if name =="context":
+                    context = str(part.content.decode("utf-8"))
+                    print("CONTEXT: " + context)
+                    continue
+
+                string = name
+                match = re.search(r'\d+$', string)
+                if match:
+                    number = int(match.group())
+                    print(number)
+                    if (number % 2) == 0:
+                        message_array.append({"role": "assistant", "content": content})
+                    else:
+                        message_array.append({"role": "user", "content": content})
+                else:
+                    message_array.append({"role": "unknown", "content": content})
+
+        #body = json.loads(body_unicode)
+        #print(body)
+        #content = body['message']
+
+        #user_input = body_unicode #request.POST.get('user_input')
+
+        #message_array = [] # request.session.get('message_array', [])
+        print("message_arrry: " + str(message_array))
+        if user_input in ESCAPE_KEYS:
+            request.session.flush()
+            return render(request, 'art/chat.html')
+        message_obj = {"role": "user", "content": user_input}
+        message_array.append(message_obj)
+        response_message = generate_chat_response(message_array, context)
+        message_array.append({"role": "assistant", "content": str(response_message)})
+        request.session['message_array'] = message_array
+        print(message_array)
+        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array})
+    else:
+        request.session.flush()
+        return render(request, 'art/chat.html')
 
