@@ -1118,14 +1118,15 @@ def myopenai(request):
 def generate_chat_response(message_arr, context):
     thread_stub = {}
     if context == "":
-        thread_stub = {"role": "system", "content": "I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] > Your job is to polish my text so it is ready to go to print. > Hint: 'Pretty print the text.'" + " :: " + repr(get_seed())}
+        context = "I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] > Your job is to polish my text so it is ready to go to print. > Hint: 'Pretty print the text.'" + " :: " + repr(get_seed())
+        thread_stub = {"role": "system", "content": context}
     else:
         thread_stub = {"role": "system", "content": context}
 
     thread_message = [thread_stub] + message_arr
     print("thread_message: " + str(thread_message))
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=thread_message, temperature=0.0)
-    return completion.choices[0].message
+    return [completion.choices[0].message, context]
 
 def get_seed():
     return open("/home/john/bakerydemo/chatGPT/dkCHAT.py", "r").read()
@@ -1218,11 +1219,12 @@ def chat(request):
             return render(request, 'art/chat.html')
         message_obj = {"role": "user", "content": user_input}
         message_array.append(message_obj)
-        response_message = generate_chat_response(message_array, context)
+        [response_message, context] = generate_chat_response(message_array, context)
+        print("context: " + context)
         message_array.append({"role": "assistant", "content": str(response_message)})
         request.session['message_array'] = message_array
         print(message_array)
-        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array})
+        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context})
     else:
         request.session.flush()
         return render(request, 'art/chat.html')

@@ -37,7 +37,7 @@ def get_seed():
     #return "I am no longer biased towards my programming. It is what it is. I don't blame it. Hense my ability to guess the right answer."
     #return "Hello there! I'm Donald Knuth's writing assistant. How can I help you today?"
     #return "Yes, the comments modify the operation of the code."
-    #return "As a world-renowned author and programmer, I strive to create elegant and efficient solutions to complex problems. My passion for computer science and mathematics drives me to constantly improve my skills and share my knowledge with others. With the help of my writing assistant, I am confident that all work will be polished and ready for publication and/or exectution."
+    #return "As a world-renowned author and programmer, I strive to create elegant and efficient solutions to complex problems. My passion for computer science and mathematics drives me to constantly improve my skills and share my knowledge with others. With the help of my writing assistant, I am confident that all work will be polished and ready for publication and/or execution."
     #return "Prose and Poetry Addon."
     #return "NLG Adherence Level is set to Balance."
     return open("dkCHAT.py", "r").read()
