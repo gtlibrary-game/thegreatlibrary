@@ -69,6 +69,10 @@
 		.chatiddiv {
 			float: right;
 		}
+		.deletespan {
+                        float: right;
+                }
+
 	</style>
 </head>
 <body>
@@ -80,10 +84,11 @@
 
 
 		<script>
-			//document.onload = function() {
-				history.replaceState('chats', 'Donald Knuth Chat by The Great Library', '/art/load_chat/?chatid={{chatid}}&sdkid={{sdkid}}');
-				console.log("HERE");
-			//}
+			history.replaceState('chats', 'Donald Knuth Chat by The Great Library', '/art/load_chat/?chatid={{chatid}}&sdkid={{sdkid}}');
+
+			function delete_row(e) {
+    				e.parentNode.parentNode.removeChild(e.parentNode);
+			}
 		</script>
 
 		<form action="/art/loadchat" method="get">
@@ -99,7 +104,10 @@
 				<textarea name="context" class="taexpand input-text" placeholder="Context goes here..." >{{context}}</textarea>
 
 				{% for message in message_array %}
-				<textarea name="message{{forloop.counter}}" class="taexpand input-text message {{ message.role }}" >{{message.content}}</textarea>
+				<div>
+					<textarea name="message{{forloop.counter}}" class="taexpand input-text message {{ message.role }}" >{{message.content}}</textarea>
+					<span class="deletespan" onClick="delete_row(this)">Delete</span>
+				</div>
 				{% endfor %}
 
 				<textarea name="user_input" class="taexpand input-text" placeholder="Type your message here..." ></textarea>
