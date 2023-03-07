@@ -9,6 +9,9 @@ from os.path import exists
 import requests
 import urllib
 import openai
+import jsonlines
+import random
+import string
 
 #print(dir(openai))
 
@@ -1115,7 +1118,7 @@ def myopenai(request):
 
     return JsonResponse({"content":response["choices"][0]["text"].lstrip(), "type":"message"}, safe=False)
 
-def generate_chat_response(message_arr, context):
+def generate_chat_response(message_arr, context, chatid_input):
     thread_stub = {}
     if context == "":
         context = "I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] > Your job is to polish my text so it is ready to go to print. > Hint: 'Pretty print the text.'" + " :: " + repr(get_seed())
@@ -1126,7 +1129,7 @@ def generate_chat_response(message_arr, context):
     thread_message = [thread_stub] + message_arr
     print("thread_message: " + str(thread_message))
     completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=thread_message, temperature=0.0)
-    return [completion.choices[0].message, context]
+    return [completion.choices[0].message, context, chatid_input]
 
 def get_seed():
     return open("/home/john/bakerydemo/chatGPT/dkCHAT.py", "r").read()
@@ -1152,6 +1155,37 @@ def content_headers_get_name(example_object):
     #print(name_value)  # Output: csrfmiddlewaretoken
     return(name_value)
 
+def messages_to_completion(message_array):
+    completion = ""
+    for message in message_array:
+        if message['role'] == 'user':
+            completion += ".input_text(\"" + message['content'] + "\")"
+        elif message['role'] == 'assistant':
+            completion += ".print(\"" + message['content'] + "\")"
+    return completion
+
+
+def write_to_log_file(message_array, response_message, context, threadid):
+    #with jsonlines.open('/home/john/bakerydemo/chatGPT/chat_logs.jsonl', mode='a') as writer::0
+
+    if threadid == "":
+        threadid = ''.join(random.choices(string.ascii_lowercase, k=20))
+
+    filename = threadid + '.jsonl'
+    with jsonlines.open('/home/john/bakerydemo/chatGPT/holographic-' + filename, mode='w') as writer:
+        writer.write({'prompt': "load().context(\"" + context + "\")" + messages_to_completion(message_array[:-1]),
+                'completion': messages_to_completion([message_array[-1]]) })
+        return threadid
+
+        writer.write({'prompt': "context", 'completion': context})
+        for i in range(len(message_array)):
+            if message_array[i]['role'] == 'user':
+                prompt = message_array[i]['content']
+                completion = message_array[i+1]['content'] if i+1 < len(message_array) and message_array[i+1]['role'] == 'assistant' else ''
+                writer.write({'prompt': prompt, 'completion': completion})
+                print("prompt: ", prompt)
+                print("completion", completion)
+    return threadid
 
 @api_view(['POST', ])
 def chat(request):
@@ -1163,6 +1197,7 @@ def chat(request):
 
         message_array = [] # request.session.get('message_array', [])
 
+        chatid_input = ""
         user_input = ""
         context = ""
         if request.META['CONTENT_TYPE'] in ["application/json", "multipart/form-data"]:
@@ -1194,6 +1229,10 @@ def chat(request):
                     print("CONTEXT: " + context)
                     continue
 
+                if name =="chatid_input":
+                    chatid_input = content
+                    continue
+
                 string = name
                 match = re.search(r'\d+$', string)
                 if match:
@@ -1219,12 +1258,15 @@ def chat(request):
             return render(request, 'art/chat.html')
         message_obj = {"role": "user", "content": user_input}
         message_array.append(message_obj)
-        [response_message, context] = generate_chat_response(message_array, context)
+        [response_message, context, chatid] = generate_chat_response(message_array, context, chatid_input)
         print("context: " + context)
         message_array.append({"role": "assistant", "content": str(response_message)})
         request.session['message_array'] = message_array
         print(message_array)
-        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context})
+
+        chatid = write_to_log_file(message_array, response_message, context, chatid)
+
+        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': chatid})
     else:
         request.session.flush()
         return render(request, 'art/chat.html')

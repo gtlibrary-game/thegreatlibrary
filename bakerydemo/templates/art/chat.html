@@ -61,17 +61,32 @@
     			height: 100%;
     			box-sizing: border-box;
 		}
+		.chatid {
+			font-size: 1.2em;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+		.chatiddiv {
+			float: right;
+		}
 	</style>
 </head>
 <body>
 	<div class="container">
 		{% if response_message %}
 			<div class="message assistant">{{ response_message }}</div>
+
 		{% endif %}
+
+		<form action="/art/loadchat" method="get">
+		</form>
 
 		<form action="/art/chat/" method="post" enctype='multipart/form-data'>
 			{% csrf_token %}
 			<div class="input-container">
+				<div class="chatiddiv">
+					Chat ID: <input name="chatid_input" type="text" class="chatid" value="{{chatid}}"></input>
+				</div>
 				<textarea name="context" class="taexpand input-text" placeholder="Context goes here..." >{{context}}</textarea>
 
 				{% for message in message_array %}
