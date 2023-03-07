@@ -1171,6 +1171,15 @@ def write_to_log_file(message_array, response_message, context, threadid):
     if threadid == "":
         threadid = ''.join(random.choices(string.ascii_lowercase, k=20))
 
+    #if threadid not equal to 20 chars long
+    #regenerate.. fixme
+
+    with open('/home/john/bakerydemo/chatGPT/chat-' + threadid + '.pickle', 'wb') as f:
+        pickle.dump(message_array, f)
+        pickle.dump(response_message, f)
+        pickle.dump(context, f)
+        pickle.dump(threadid, f)
+
     filename = threadid + '.jsonl'
     with jsonlines.open('/home/john/bakerydemo/chatGPT/holographic-' + filename, mode='w') as writer:
         writer.write({'prompt': "load().context(\"" + context + "\")" + messages_to_completion(message_array[:-1]),
@@ -1186,6 +1195,23 @@ def write_to_log_file(message_array, response_message, context, threadid):
                 print("prompt: ", prompt)
                 print("completion", completion)
     return threadid
+
+
+@api_view(['GET', ])
+def load_chat(request):
+    threadid = request.GET.get('chatid', '')
+    try:
+        with open('/home/john/bakerydemo/chatGPT/chat-' + threadid + '.pickle', 'rb') as f:
+            message_array = pickle.load(f)
+            response_message = pickle.load(f)
+            context = pickle.load(f)
+            threadid = pickle.load(f)
+
+            return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': threadid})
+    except:
+        return render(request, 'art/chat.html')
+
+
 
 @api_view(['POST', ])
 def chat(request):
