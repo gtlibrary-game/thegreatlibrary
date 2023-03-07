@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Donald Knuth Chat</title>
+	<title>Donald Knuth Chat by The Great Library</title>
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -78,6 +78,14 @@
 
 		{% endif %}
 
+
+		<script>
+			//document.onload = function() {
+				history.replaceState('chats', 'Donald Knuth Chat by The Great Library', '/art/load_chat/?chatid={{chatid}}&sdkid={{sdkid}}');
+				console.log("HERE");
+			//}
+		</script>
+
 		<form action="/art/loadchat" method="get">
 		</form>
 
@@ -86,6 +94,7 @@
 			<div class="input-container">
 				<div class="chatiddiv">
 					Chat ID: <input name="chatid_input" type="text" class="chatid" value="{{chatid}}"></input>
+					SDK ID: <input name="sdkid_input" type="text" class="sdkid" value="{{sdkid}}"></input>
 				</div>
 				<textarea name="context" class="taexpand input-text" placeholder="Context goes here..." >{{context}}</textarea>
 

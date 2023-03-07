@@ -1200,6 +1200,7 @@ def write_to_log_file(message_array, response_message, context, threadid):
 @api_view(['GET', ])
 def load_chat(request):
     threadid = request.GET.get('chatid', '')
+    sdkid = request.GET.get('sdkid', '')
     try:
         with open('/home/john/bakerydemo/chatGPT/chat-' + threadid + '.pickle', 'rb') as f:
             message_array = pickle.load(f)
@@ -1207,7 +1208,7 @@ def load_chat(request):
             context = pickle.load(f)
             threadid = pickle.load(f)
 
-            return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': threadid})
+            return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': threadid, 'sdkid': sdkid})
     except:
         return render(request, 'art/chat.html')
 
@@ -1223,6 +1224,7 @@ def chat(request):
 
         message_array = [] # request.session.get('message_array', [])
 
+        sdkid_input = ""
         chatid_input = ""
         user_input = ""
         context = ""
@@ -1259,6 +1261,10 @@ def chat(request):
                     chatid_input = content
                     continue
 
+                if name =="sdkid_input":
+                    sdkid_input = content
+                    continue
+
                 string = name
                 match = re.search(r'\d+$', string)
                 if match:
@@ -1292,7 +1298,7 @@ def chat(request):
 
         chatid = write_to_log_file(message_array, response_message, context, chatid)
 
-        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': chatid})
+        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': chatid, 'sdkid': sdkid_input})
     else:
         request.session.flush()
         return render(request, 'art/chat.html')
