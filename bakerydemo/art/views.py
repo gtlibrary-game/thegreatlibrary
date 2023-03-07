@@ -1181,7 +1181,7 @@ def write_to_log_file(message_array, response_message, context, threadid):
         pickle.dump(threadid, f)
 
     filename = threadid + '.jsonl'
-    with jsonlines.open('/home/john/bakerydemo/chatGPT/holographic-' + filename, mode='w') as writer:
+    with jsonlines.open('/home/john/bakerydemo/chatGPT/holographic-' + filename, mode='a') as writer:
         writer.write({'prompt': "load().context(\"" + context + "\")" + messages_to_completion(message_array[:-1]),
                 'completion': messages_to_completion([message_array[-1]]) })
         return threadid
