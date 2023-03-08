@@ -46,7 +46,7 @@ from bakerydemo.art.moralis import Moralis
 moralis = Moralis()
 
 #os.environ['DJANGO_SETTINGS_MODULE']
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = "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"
 
 securePort = os.environ['securePort']
 secureHost = os.environ['secureHost']
@@ -1218,7 +1218,7 @@ def load_chat(request):
 def chat(request):
     if request.method == 'POST':
         #print(dir(request.body))
-        print(request.META['CONTENT_TYPE'])
+        #print(request.META['CONTENT_TYPE'])
         body_unicode = str(request.body.decode('utf-8'))
         print("body_unicode, " + body_unicode)
 
