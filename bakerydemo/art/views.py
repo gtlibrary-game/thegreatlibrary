@@ -8,10 +8,13 @@ import pickle
 from os.path import exists
 import requests
 import urllib
+from urllib.parse import parse_qs
 import openai
 import jsonlines
 import random
 import string
+
+import subprocess
 
 #print(dir(openai))
 
@@ -41,12 +44,14 @@ from bakerydemo.art.minter import MyFirstMinter
 from bakerydemo.art.minter import MySecondMinter
 #from bakerydemo.art.minter import Minter
 
+from ebooklib import epub
+
 from bakerydemo.art.moralis import Moralis
 
 moralis = Moralis()
 
 #os.environ['DJANGO_SETTINGS_MODULE']
-openai.api_key = "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"
+openai.api_key = os.environ['OPENAI_API_KEY']
 
 securePort = os.environ['securePort']
 secureHost = os.environ['secureHost']
@@ -1105,8 +1110,8 @@ def myopenai(request):
     content = body['message']
 
     response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt="Rewrite the following to highlight any grammar, spelling, or clarity issues with the narrative:" + content,
+        model="davinci:ft-personal-2023-03-09-04-03-28",
+        prompt=content,
         temperature=0.7,
         max_tokens=256,
         top_p=1,
@@ -1165,7 +1170,23 @@ def messages_to_completion(message_array):
     return completion
 
 
-def write_to_log_file(message_array, response_message, context, threadid):
+def write_to_replace_file(start_text, replace_text):
+    #with jsonlines.open('/home/john/bakerydemo/chatGPT/chat_logs.jsonl', mode='a') as writer::0
+
+    replaceid = ''.join(random.choices(string.ascii_lowercase, k=20))
+
+    with open('/home/john/bakerydemo/chatGPT/replace-' + replaceid + '.pickle', 'wb') as f:
+        pickle.dump(start_text, f)
+        pickle.dump(replace_text, f)
+
+    filename = replaceid + '.jsonl'
+    with jsonlines.open('/home/john/bakerydemo/chatGPT/training-' + filename, mode='w') as writer:
+        writer.write({'prompt': "Please polishing the following text for publication: " + start_text,
+                'completion': replace_text})
+    return replaceid
+
+
+def write_to_log_file(message_array, response_message, context, threadid, modelid):
     #with jsonlines.open('/home/john/bakerydemo/chatGPT/chat_logs.jsonl', mode='a') as writer::0
 
     if threadid == "":
@@ -1179,6 +1200,7 @@ def write_to_log_file(message_array, response_message, context, threadid):
         pickle.dump(response_message, f)
         pickle.dump(context, f)
         pickle.dump(threadid, f)
+        pickle.dump(modelid, f)
 
     filename = threadid + '.jsonl'
     with jsonlines.open('/home/john/bakerydemo/chatGPT/holographic-' + filename, mode='a') as writer:
@@ -1201,35 +1223,92 @@ def write_to_log_file(message_array, response_message, context, threadid):
 def load_chat(request):
     threadid = request.GET.get('chatid', '')
     sdkid = request.GET.get('sdkid', '')
+    modelid = request.GET.get('modelid', '')
+    if modelid == "":
+        modelid = 'gpt-3.5-turbo'
+
     try:
         with open('/home/john/bakerydemo/chatGPT/chat-' + threadid + '.pickle', 'rb') as f:
             message_array = pickle.load(f)
             response_message = pickle.load(f)
             context = pickle.load(f)
             threadid = pickle.load(f)
+            modelid = pickle.load(f)
 
-            return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': threadid, 'sdkid': sdkid})
+            return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': threadid, 'sdkid': sdkid,
+                'modelids': getModelIds(), 'chosenmodelid': modelid})
     except:
-        return render(request, 'art/chat.html')
+        print("modelid: " + modelid)
+        return render(request, 'art/chat.html', {'modelids': getModelIds(), 'modelid': modelid})
 
+
+@api_view(['POST', ])
+def savereplacement(request):
+    if request.method == 'POST':
+        print(request.META['CONTENT_TYPE'])
+        body_unicode = str(request.body.decode('utf-8'))
+
+        start_text = ""
+        replace_text = ""
+        if request.META['CONTENT_TYPE'] in ["multipart/form-data"]:
+            components = parse_qs(body_unicode)
+            print(components)
+            if "start_text" in components.keys():
+                start_text = components["start_text"][0];
+                print(start_text)
+
+
+            if "replace_text" in components.keys():
+                replace_text = components["replace_text"][0];
+        else:
+            error
+
+        write_to_replace_file(start_text, replace_text)
+
+        json_obj = {"content" : "Saved"}
+        return JsonResponse(json_obj, safe=False)
 
 
 @api_view(['POST', ])
 def chat(request):
     if request.method == 'POST':
         #print(dir(request.body))
-        #print(request.META['CONTENT_TYPE'])
+        print(request.META['CONTENT_TYPE'])
         body_unicode = str(request.body.decode('utf-8'))
         #print("body_unicode, " + body_unicode)
 
         message_array = [] # request.session.get('message_array', [])
 
         sdkid_input = ""
+        modelid = ""
         chatid_input = ""
         user_input = ""
         context = ""
+        return_json = False
         if request.META['CONTENT_TYPE'] in ["application/json", "multipart/form-data"]:
             user_input = body_unicode;
+            print("user_input: " + user_input)
+
+            if request.META['CONTENT_TYPE'] == "multipart/form-data":
+                components = parse_qs(user_input)
+                print(components)
+                if "True" in components['return_json']:
+                    return_json = True;
+
+                if "user_input" in components.keys():
+                    user_input = components["user_input"][0];
+                if "context" in components.keys():
+                    context = components["context"][0]
+
+                if  "chatid_input" in components.keys():
+                    chatid_input = components["chatid_input"][0]
+
+                if "message1" in components.keys():
+                    message_array.append({"role": "user", "content": components['message1'][0]})
+
+                if "message2" in components.keys():
+                    message_array.append({"role": "assistant", "content": components['message2'][0]})
+
         else:
             multipart_data = decoder.MultipartDecoder(body_unicode.encode('utf-8'), request.META['CONTENT_TYPE'])
             for part in multipart_data.parts:
@@ -1243,8 +1322,22 @@ def chat(request):
                 #print(part.header.name)
 
                 name = content_headers_get_name(part.headers)
+                print("name: " + name)
+
+
                 if name == "csrfmiddlewaretoken":
                     #print("DEBUG: csrfmiddlewaretoken")
+                    continue
+
+                if name == "return_json":
+                    if content == "True":
+                        return_json = True;
+                        print("should return json")
+                    continue;
+
+                if name == "modelids":
+                    modelid = content
+                    print("content: " + content)
                     continue
 
                 if name == "user_input":
@@ -1296,10 +1389,183 @@ def chat(request):
         request.session['message_array'] = message_array
         #print(message_array)
 
-        chatid = write_to_log_file(message_array, response_message, context, chatid)
+        if modelid == "":
+            print("setting model id...")
+            modelid = 'gpt-3.5-turbo'
 
-        return render(request, 'art/chat.html', {'response_message': response_message, 'message_array': message_array, 'context': context, 'chatid': chatid, 'sdkid': sdkid_input})
+        print("modelid:"+ modelid)
+
+        chatid = write_to_log_file(message_array, response_message, context, chatid, modelid)
+
+
+        if return_json:
+            json_obj = {"content": response_message, "type": "message"}
+            print(json_obj)
+            return JsonResponse(json_obj, safe=False)
+        return render(request, 'art/chat.html', {'response_message': response_message,
+                    'message_array': message_array, 'context': context, 'chatid': chatid,
+                    'sdkid': sdkid_input, 'modelids': getModelIds(), 'modelid': modelid})
     else:
         request.session.flush()
+        if return_json:
+            return JsonResponse({"content": "Error get json not supported."})
         return render(request, 'art/chat.html')
+
+def getModelIds():
+    subplist = subprocess.check_output(['openai', 'api', 'fine_tunes.list'])
+
+    return listIds(json.loads(subplist.decode('utf-8')))
+
+def listIds(parsed_object):
+    ids = []
+    for item in parsed_object['data']:
+        if item['fine_tuned_model'] is not None:
+            #ids.append(item['id'])
+            ids.append(item['fine_tuned_model'])
+    return ids
+
+@api_view(['GET', ])
+def testhtml(request):
+    #epub_content = "<html><body>...Loaded</body></html>"
+
+    book = epub.EpubBook()
+    book.set_title('Alice in Wonderland')
+    book.set_language('en')
+    book.add_author('Lewis Carroll')
+    c = epub.EpubHtml(title='Chapter 1', file_name='chap_01.xhtml', lang='en')
+
+    c.content=u"""
+<html><head>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+  <script>
+    function doit(e) {
+        console.log(e);
+
+        const domContainer = document.querySelector('#like_button_container');
+        const root = ReactDOM.createRoot(domContainer);
+        root.render(e(LikeButton));
+    }
+  </script>
+
+</head>
+<body>
+  <h1 onlick="doit(this)" id="like_button_container">Chapter 1</h1><p>Down the Rabbit-Hole</p>
+</body></html>
+"""
+
+    book.add_item(c)
+    book.spine = ['nav', c, 'name', 'This is the name of the book']
+    epub.write_epub('alice.epub', book, {})
+    epub.write_epub('alice.zip', book, {})
+
+    response = HttpResponse(c.content, content_type='text/html')
+    return response
+    
+@api_view(['GET', ])
+def testscript(request):
+    script = ""
+    script += open("/home/john/bakerydemo/bakerydemo/art/react.development.js").read() + "\n"
+    script += open("/home/john/bakerydemo/bakerydemo/art/react-dom.development.js").read() + "\n"
+    script += open("/home/john/bakerydemo/bakerydemo/art/embed.js").read() + "\n"
+
+    script += "\nconsole.log('Script loaded.');"
+
+    return HttpResponse(script, content_type='text/html')
+
+@api_view(['GET', ])
+def testalice(request):
+
+    book = epub.EpubBook()
+    book.set_title('Alice in Wonderland')
+    book.set_language('en')
+    book.add_author('Lewis Carroll')
+    c = epub.EpubHtml(title='Chapter 1', file_name='chap_01.xhtml', lang='en')
+    #c.content=u'<html><head></head><body><h1>Chapter 1</h1><p>Down the Rabbit-Hole</p></body></html>'
+
+    # All the scripting has to go into art/testscript/
+    c.content=u"""
+<div>
+
+<!-- Trigger/Open The Modal -->
+<!--button id="myBtn">Open Modal</button-->
+
+<!-- The Modal -->
+<div id="myModal" class="modal" style="
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+">
+
+  <!-- Modal content -->
+  <div class="modal-content" style="
+   background-color: #fefefe;
+   margin: auto;
+   padding: 20px;
+   border: 1px solid #888;
+   width: 80%; 
+">
+    <span class="close" style="
+     color: #aaaaaa;
+     float: right;
+     font-size: 28px;
+     font-weight: bold;
+">&times;</span>
+    <p>Inset iframe with the marketplace here.</p>
+  </div>
+
+</div>
+
+
+  <div id="modal_container_div"></div>
+  <div id="like_button_container_div" ></div>
+  <h1 onclick="doit1(this)" id="like_button_container">Chapter 1</h1><p>Down the Rabbit-Hole</p>
+
+</div>
+"""
+
+    book.add_item(c)
+    book.spine = ['nav', c, 'name', 'This is the name of the book']
+    epub.write_epub('alice.epub', book, {})
+    epub.write_epub('alice.zip', book, {})
+
+    import zipfile
+    path_to_zip_file = 'alice.zip'
+    directory_to_extract_to = "."
+    with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+        zip_ref.extractall(directory_to_extract_to)
+
+
+    f = open("EPUB/chap_01.xhtml")
+    html_content = f.read()
+
+    #return HttpResponse(html_content, content_type='text/html')
+    return HttpResponse(c.content, content_type='text/html')
+
+
+@api_view(['GET', ])
+def testepub(request):
+
+    myepub = epub.read_epub('/home/john/alice.epub')
+    print(myepub)
+
+    # Read the .epub file into memory
+    with open('/home/john/alice.epub', 'rb') as f:
+        epub_content = f.read()
+
+    # Return the .epub file as a response
+    response = HttpResponse(epub_content, content_type='application/epub+zip')
+    response['Content-Disposition'] = 'inline; filename="alice.epub"'
+    return response
+
+
 
