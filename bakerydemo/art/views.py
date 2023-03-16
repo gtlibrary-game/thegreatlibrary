@@ -1269,6 +1269,41 @@ def savereplacement(request):
         return JsonResponse(json_obj, safe=False)
 
 
+def to_curator(input_text):
+    replaceid = ''.join(random.choices(string.ascii_lowercase, k=20))
+
+    with open('/home/john/bakerydemo/chatGPT/finetuning-' + replaceid + '.pickle', 'wb') as f:
+        pickle.dump(input_text, f)
+
+    filename = replaceid + '.jsonl'
+    with jsonlines.open('/home/john/bakerydemo/chatGPT/training-funetune-' + filename, mode='w') as writer:
+        writer.write(input_text)
+    return replaceid
+
+
+@api_view(['POST', ])
+def savefinetune(request):
+    if request.method == 'POST':
+        print(request.META['CONTENT_TYPE'])
+        body_unicode = str(request.body.decode('utf-8'))
+
+        input_text = ""
+        if request.META['CONTENT_TYPE'] in ["multipart/form-data"]:
+            components = parse_qs(body_unicode)
+            print(components)
+            if "user_input" in components.keys():
+                input_text = components["user_input"][0];
+                print(input_text)
+        else:
+            error
+
+        #write_to_replace_file(start_text, replace_text)
+        to_curator(input_text)
+        json_obj = {"content" : "Saved"}
+
+        return JsonResponse(json_obj, safe=False)
+
+
 @api_view(['POST', ])
 def chat(request):
     if request.method == 'POST':
