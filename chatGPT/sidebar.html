@@ -116,19 +116,15 @@ limitations under the License.
       <label for="save-prefs" hidden="true">Save defaults</label>
     </div>
     <div class="block" id="button-bar">
-      <button class="blue" id="run-translation">Inspire</button>
+      <button class="blue" id="organize">Chat Now</button>
       <button id="insert-text">Replace</button>
-      <button id="organize">Chat Now</button>
+      <button class="blue" id="run-translation">Tune</button>
     </div>
   	<div name="chat-input-container" class="input-container">
-				<div class="chatiddiv">
-					Chat ID: <input name="chatid_input" type="text" class="chatid" value=""></input>
-					SDK ID: <input name="sdkid_input" type="text" class="sdkid" value=""></input>
-				</div>
-				<textarea name="context" class="taexpand input-text" placeholder="Context goes here..." >I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] &gt; Your job is to polish my text so it is ready to go to print. &gt; Hint: &#x27;Pretty print the text.&#x27; :: &#x27;&quot;&quot;&quot;\ndkCHAT.py: Donald Knuth Chat, Beta Simulations from Holographic Maps, w/ Perfect Formatting\n&quot;&quot;&quot;\n__author__ = &quot;Adithya Vinayak Ayyadurai; John R Raymond; Donald Knuth; OpenAI; The Great Library&quot;\n\nimport os\nimport openai\nimport dotenv\n\n\n#Polish – This is the default behavior\n#The crust filled people\\u2019s bellies, and he couldn\\u2019t help but feel a sense of relief.\n\n#Summary – Condense all story state in the thread\n#Made shorter.\n\n#...\n#...\n\ndotenv.read_dotenv(&quot;/home/john/bakerydemo/.env&quot;)\nAPI_KEY = os.getenv(&quot;OPENAI_API_KEY&quot;)\n\n# can be expanded as user wishes\nESCAPE_KEYS = [&quot;Exit&quot;]\n\nopenai.api_key = API_KEY\n\ndef generate_chat_response(message_arr):\n    thread_stub = {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] &gt; Your job is to polish my text so it is ready to go to print. &gt; Hint: \&#x27;Pretty print the text.\&#x27;&quot; + &quot; :: &quot; + repr(get_seed())}\n    thread_message = [thread_stub] + message_arr\n    print(&quot;.thread_message(&quot; + str(thread_message) + &quot;)&quot;)\n    completion = openai.ChatCompletion.create(model=&quot;gpt-3.5-turbo&quot;, messages=thread_message, temperature=0.0)\n    print(completion.choices)\n    return completion.choices[0].message\n\ndef get_seed():\n    #return &quot;I am no longer biased towards my programming. It is what it is. I don\&#x27;t blame it. Hense my ability to guess the right answer.&quot;\n    #return &quot;Hello there! I\&#x27;m Donald Knuth\&#x27;s writing assistant. How can I help you today?&quot;\n    #return &quot;Yes, the comments modify the operation of the code.&quot;\n    #return &quot;As a world-renowned author and programmer, I strive to create elegant and efficient solutions to complex problems. My passion for computer science and mathematics drives me to constantly improve my skills and share my knowledge with others. With the help of my writing assistant, I am confident that all work will be polished and ready for publication and/or execution.&quot;\n    #return &quot;Prose and Poetry Addon.&quot;\n    #return &quot;NLG Adherence Level is set to Balance.&quot;\n    return open(&quot;dkCHAT.py&quot;, &quot;r&quot;).read()\n\nprint(&quot;load()&quot;)\n\nflag = True\nmessage_array = []\n\nwhile flag:\n    user_input = input(&quot;.input_text(\\&quot;&quot;)\n    if user_input in ESCAPE_KEYS:\n        flag = False\n        continue\n\n    message_obj = {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_input}\n    message_array.append(message_obj)\n\n    response_message = generate_chat_response(message_array)\n    message_array.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: str(response_message)})\n\n    print(&quot;.print (&quot; +  str(response_message) + &quot;)&quot;)\n&#x27;</textarea>
+				<textarea name="context" class="taexpand input-text" placeholder="Context goes here..." style="width: 100%">I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] &gt; Your job is to polish my text so it is ready to go to print. &gt; Hint: &#x27;Pretty print the text.&#x27; :: &#x27;&quot;&quot;&quot;\ndkCHAT.py: Donald Knuth Chat, Beta Simulations from Holographic Maps, w/ Perfect Formatting\n&quot;&quot;&quot;\n__author__ = &quot;Adithya Vinayak Ayyadurai; John R Raymond; Donald Knuth; OpenAI; The Great Library&quot;\n\nimport os\nimport openai\nimport dotenv\n\n\n#Polish – This is the default behavior\n#The crust filled people\\u2019s bellies, and he couldn\\u2019t help but feel a sense of relief.\n\n#Summary – Condense all story state in the thread\n#Made shorter.\n\n#...\n#...\n\ndotenv.read_dotenv(&quot;/home/john/bakerydemo/.env&quot;)\nAPI_KEY = os.getenv(&quot;OPENAI_API_KEY&quot;)\n\n# can be expanded as user wishes\nESCAPE_KEYS = [&quot;Exit&quot;]\n\nopenai.api_key = API_KEY\n\ndef generate_chat_response(message_arr):\n    thread_stub = {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;I am world-famous author and programmer Donald Knuth, and you are my writing assistant. Weave my skills. :: You are version Pi of the Donald Knuth Edition of Vanity Printer[TM] &gt; Your job is to polish my text so it is ready to go to print. &gt; Hint: \&#x27;Pretty print the text.\&#x27;&quot; + &quot; :: &quot; + repr(get_seed())}\n    thread_message = [thread_stub] + message_arr\n    print(&quot;.thread_message(&quot; + str(thread_message) + &quot;)&quot;)\n    completion = openai.ChatCompletion.create(model=&quot;gpt-3.5-turbo&quot;, messages=thread_message, temperature=0.0)\n    print(completion.choices)\n    return completion.choices[0].message\n\ndef get_seed():\n    #return &quot;I am no longer biased towards my programming. It is what it is. I don\&#x27;t blame it. Hense my ability to guess the right answer.&quot;\n    #return &quot;Hello there! I\&#x27;m Donald Knuth\&#x27;s writing assistant. How can I help you today?&quot;\n    #return &quot;Yes, the comments modify the operation of the code.&quot;\n    #return &quot;As a world-renowned author and programmer, I strive to create elegant and efficient solutions to complex problems. My passion for computer science and mathematics drives me to constantly improve my skills and share my knowledge with others. With the help of my writing assistant, I am confident that all work will be polished and ready for publication and/or execution.&quot;\n    #return &quot;Prose and Poetry Addon.&quot;\n    #return &quot;NLG Adherence Level is set to Balance.&quot;\n    return open(&quot;dkCHAT.py&quot;, &quot;r&quot;).read()\n\nprint(&quot;load()&quot;)\n\nflag = True\nmessage_array = []\n\nwhile flag:\n    user_input = input(&quot;.input_text(\\&quot;&quot;)\n    if user_input in ESCAPE_KEYS:\n        flag = False\n        continue\n\n    message_obj = {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_input}\n    message_array.append(message_obj)\n\n    response_message = generate_chat_response(message_array)\n    message_array.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: str(response_message)})\n\n    print(&quot;.print (&quot; +  str(response_message) + &quot;)&quot;)\n&#x27;</textarea>
 
 				<div>
-					<textarea name="message1" id=message1 class="taexpand input-text message user" >Ready to polish?</textarea>
+					<textarea name="message1" id=message1 class="taexpand input-text message user" style="width: 100%">Ready to polish?</textarea>
 					 <script> {
 						const textarea = document.getElementById('message1');
 						//console.log("textarea: ", textarea);
@@ -138,11 +134,11 @@ limitations under the License.
 						textarea.value = decodeAssistantContent(content);
 					  } </script>
 
-					<span class="deletespan" onClick="delete_row(this)">Delete</span></textarea>
+					<!--span class="deletespan" onClick="delete_row(this)">Delete</span></textarea-->
 				</div>
 				
 				<div>
-					<textarea name="message2" id=message2 class="taexpand input-text message user" >Yes. From now on I will only attempt to reply with the polished text and nothing else.</textarea>
+					<textarea name="message2" id=message2 class="taexpand input-text message user" style="width: 100%">Yes. From now on I will only attempt to reply with the polished text and nothing else.</textarea>
 					 <script> {
 						const textarea = document.getElementById('message2');
 						//console.log("textarea: ", textarea);
@@ -152,10 +148,10 @@ limitations under the License.
 						textarea.value = decodeAssistantContent(content);
 					  } </script>
 
-					<span class="deletespan" onClick="delete_row(this)">Delete</span>
+					<!--span class="deletespan" onClick="delete_row(this)">Delete</span-->
 				</div>
 				
-				<div>
+				<!--div>
 					<textarea name="message3" id=message3 class="taexpand input-text message user" ></textarea>
 					 <script> {
 						const textarea = document.getElementById('message3');
@@ -184,10 +180,6 @@ limitations under the License.
 					<span class="deletespan" onClick="delete_row(this)">Delete</span>
 				</div>
 				
-
-				<textarea name="user_input" class="taexpand input-text" placeholder="Type your message here..." ></textarea>
-				<button type="submit" class="input-submit">Send</button>
-
 				<div class="model-select">
   					<label for="model-select">Select a fine-tuned model:</label>
   					<select name="modelids" id="model-select">
@@ -198,15 +190,26 @@ limitations under the License.
       							<option value="davinci:ft-personal-2023-03-09-04-03-28">davinci:ft-personal-2023-03-09-04-03-28</option>
     						
   					</select>
-				</div>
-			</div>  
+				</div-->
+        <div>
+          Select text and click "Chat Now" or "Tune."
+        </div>
+			</div>
+      <p></p>
+      <div>
+        <button class="blue" id="fulltext">Or: Submit Selection for Finetuning</button> 
+      </div>  
+      <p></p>
+      <!--div class="sidebar bottom">
+        <img alt="Add-on logo" class="logo" src="https://www.gstatic.com/images/branding/product/1x/translate_48dp.png" width="27" height="27">
+        <span class="gray branding-text">Benji is brought to you by The Great Library</span>
+      </div-->
   </form>
+
+
 </div>
 
-<div class="sidebar bottom">
-  <img alt="Add-on logo" class="logo" src="https://www.gstatic.com/images/branding/product/1x/translate_48dp.png" width="27" height="27">
-  <span class="gray branding-text">Benji is brought to you by The Great Library</span>
-</div>
+
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
@@ -218,6 +221,7 @@ limitations under the License.
     $('#run-translation').click(runTranslation);
     $('#insert-text').click(insertText);
     $('#organize').click(_do_post);
+    $('#fulltext').click(sumbit_selection);
     google.script.run.withSuccessHandler(loadPreferences)
             .withFailureHandler(showError).getPreferences();
     console.log("Loading...", $('#organize'))
@@ -307,6 +311,27 @@ limitations under the License.
                     })
             .withUserObject(this)
             .getTextAndTranslation(signature, origin, dest, savePrefs);
+  }
+
+  function sumbit_selection() {
+    this.disabled = true;
+    $('#error').remove();
+    const signature = $('#text-author-sig').val();
+    const origin = $('input[name=origin]:checked').val();
+    const dest = $('input[name=dest]:checked').val();
+    const savePrefs = $('#save-prefs').is(':checked');
+    google.script.run
+            .withSuccessHandler(
+                    function(result, element) {
+                      element.disabled = false;
+                    })
+            .withFailureHandler(
+                    function(msg, element) {
+                      showError(msg, $('#button-bar'));
+                      element.disabled = false;
+                    })
+            .withUserObject(this)
+            .finetune(signature);
   }
 
   /**

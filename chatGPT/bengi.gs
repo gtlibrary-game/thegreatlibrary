@@ -148,7 +148,7 @@
   }
 
   function savereplacement(oldText, newText){
-    var url = 'http://staging.greatlibrary.io:8000/art/savereplacement/';
+    var url = 'https://author.greatlibrary.io/art/savereplacement/';
     var options = {
       'method': 'post',
       'contentType': 'multipart/form-data',
@@ -158,11 +158,11 @@
       }
     };
     var response = UrlFetchApp.fetch(url, options);
-    console.log(response);
+    console.log(response.getContentText());
   }
 
   function getChatResponse(user_input, context, chatid_input, sdkid_input, modelid, message1, message2) {
-    var url = 'http://staging.greatlibrary.io:8000/art/chat/';
+    var url = 'https://author.greatlibrary.io/art/chat/';
     var options = {
       'method': 'post',
       'contentType': 'multipart/form-data',
@@ -204,6 +204,36 @@
         };
   }
 
+  function getFinetuneResponse(user_input, sdkid_input) {
+    var url = 'https://author.greatlibrary.io/art/savefinetune/';
+    var options = {
+      'method': 'post',
+      'contentType': 'multipart/form-data',
+      'payload': {
+        'return_json': "True",
+        'user_input': user_input,
+        'sdkid_input': sdkid_input
+      }
+    };
+    var response = UrlFetchApp.fetch(url, options);
+    var result = JSON.parse(response.getContentText());
+    console.log(result.content);
+    //var result = response.getContentText();
+    return result.content.content;
+  }
+
+  function finetune(sdkid) {
+
+        console.log("In finetune");
+
+        user_input = getSelectedText().join('\n');
+        var result = getFinetuneResponse(user_input, sdkid);
+        return {
+          content: "Added"
+          //content: "here content be"
+        };
+  }
+
   /**
    * Replaces the text of the current selection with the provided text, or
    * inserts text at the current cursor location. (There will always be either
@@ -215,6 +245,9 @@
    */
   function insertText(newText) {
     const selection = DocumentApp.getActiveDocument().getSelection();
+
+    savereplacement(getSelectedText().join('\n'), newText);
+
     if (selection) {
       let replaced = false;
       const elements = selection.getSelectedElements();
@@ -254,8 +287,8 @@
             element.clear();
             element.asText().setText(newText);
             replaced = true;
-
-            savereplacement(getSelectedText().join('\n'), newText);
+            console.log("Here I am.");
+            
           } else {
             // We cannot remove the last paragraph of a doc. If this is the case,
             // just clear the element.
