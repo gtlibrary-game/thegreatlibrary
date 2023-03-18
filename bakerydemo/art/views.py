@@ -1269,6 +1269,7 @@ def savereplacement(request):
         return JsonResponse(json_obj, safe=False)
 
 
+____comment____ = """
 def to_curator(input_text):
     replaceid = ''.join(random.choices(string.ascii_lowercase, k=20))
 
@@ -1278,6 +1279,23 @@ def to_curator(input_text):
     filename = replaceid + '.jsonl'
     with jsonlines.open('/home/john/bakerydemo/chatGPT/training-funetune-' + filename, mode='w') as writer:
         writer.write(input_text)
+    return replaceid
+"""
+
+
+def to_curator(input_text):
+    replaceid = ''.join(random.choices(string.ascii_lowercase, k=20))
+
+    chunk_size = 200
+
+    input_text_chunks = [input_text[i:i + chunk_size] for i in range(0, len(input_text), chunk_size)]
+
+    filename = replaceid + '.jsonl'
+    with jsonlines.open('/home/john/bakerydemo/chatGPT/training-funetune-' + filename, mode='w') as writer:
+        for i in range(len(input_text_chunks) - 1):
+            writer.write({"prompt": input_text_chunks[i], "completion": input_text_chunks[i + 1]})
+        if len(input_text_chunks[-1]) == chunk_size:
+            writer.write({"prompt": input_text_chunks[-1], "completion": ""})
     return replaceid
 
 
