@@ -80,17 +80,26 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		}
         }
 
+
 	function buyBook(address _NBT) public payable nonReentrant {
+		buyBookInternal(_NBT, msg.value);
+	}
+	function buyBookCC(address _NBT, uint256 _amount) public nonReentrant {
+                uint256 xAmount = CultureCoin(gasToken).dexCCInFrom(msg.sender, _amount);
+
+		buyBookInternal(_NBT, xAmount);
+        }
+	function buyBookInternal(address _NBT, uint256 msgValue) internal {
 		BookTradable NBT = BookTradable(_NBT);
 
 		require(NBT.totalSupply() >= NBT.getDefaultFrom(), "Not yet.");
-		require(NBT.getDefaultPrice() <= msg.value, "More.");
+		require(NBT.getDefaultPrice() <= msgValue, "More.");
 
-		uint256 extraX = msg.value - NBT.getDefaultPrice();
-		uint256 msgValue = msg.value - extraX;
+		uint256 extraX = msgValue - NBT.getDefaultPrice();
+		uint256 msgValue = msgValue - extraX;
 
 		uint256 ccExtra = CultureCoin(gasToken).dexXMTSPIn{value:extraX}();
-		uint256 ccBulk = CultureCoin(gasToken).dexXMTSPIn{value: msg.value - extraX}();
+		uint256 ccBulk = CultureCoin(gasToken).dexXMTSPIn{value: msgValue - extraX}();
 
         	uint256 operatorCut = (ccBulk * operatorFee) / 100;          // Divide to make it a percent.
 
@@ -112,7 +121,6 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		NBT.safeTransferFromRegistry(address(this), msg.sender, NBT.totalSupply());
 	}
 
-
     	address operator;
     	address private cCA; 	/// Adminisistrator 
     	address private gasToken;   /// culturecoin.
@@ -122,7 +130,9 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		gasToken = _gasToken;
 
 		operatorFee = 1;
+
     	}
+
 	function setOperatorFee(uint256 _operatorFee) public {
 		require(msg.sender == cCA, "Admins only.");
 		

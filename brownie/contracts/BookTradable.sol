@@ -58,16 +58,16 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
         defaultprice = _defaultprice;
         defaultfrom = _defaultfrom;
 
-	    gasToken = _gasToken;
+	gasToken = _gasToken;
 
         royalty = 5;  //5%
 
-	    //bookRegistryAddress = _bookRegistryAddress;
+	//bookRegistryAddress = _bookRegistryAddress;
     }
 
     // Used like: DCBT.safeTransferFromRegistry(address(this), msg.sender, DCBT.totalSupply());
     function safeTransferFromRegistry(address from, address to, uint256 tokenId) public nonReentrant{
-	    require(isAddon[msgSender()], "Addons only.");
+	require(isAddon[msgSender()], "Addons only.");
 
         address tokenOwner = ERC721.ownerOf(tokenId);
         require(tokenOwner != to, "Token owner can not transfer token to self.");
@@ -81,11 +81,11 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
             tokenRewarded[tokenId] = true;
         }
 
-            // Give the buyer their share of the gas.
+        // Give the buyer their share of the gas.
         if(gasRewards[tokenId] != 0) {
             IERC20(gasToken).safeTransfer(to, gasRewards[tokenId]);
             gasRewards[tokenId] = 0;		// Rewards are now empty.
-	    }	
+	 }	
     }
 
     mapping(address => bool) public isAddon;
