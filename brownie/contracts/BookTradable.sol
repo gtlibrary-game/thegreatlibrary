@@ -91,7 +91,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     mapping(address => bool) public isAddon;
     function setAddon(address _addon, bool _isAddon) public {
         require(_addon!=address(0), "Invalid address");
-        require(cCA == msgSender() || isAddon[msg.sender]);
+        require(cCA == msgSender() || isAddon[msg.sender] || msgSender() == owner(), "No perm.");
         isAddon[_addon] = _isAddon;
     }
     function getAddon(address _addon) external view returns(bool) {
