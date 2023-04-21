@@ -160,6 +160,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     }
 
     mapping(uint256 => string) private reasons;
+    mapping(uint256 => uint256) private amount;
     uint256 reasonId;
     // This function burns the Culture Coins that the contract owns on behalf of the token owner.
     function burnGas(uint256 _tokenId, uint256 _amount, string memory _reason) external nonReentrant returns(uint256) {
@@ -175,10 +176,11 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 
 	reasonId++;
 	reasons[reasonId] = _reason;
+        amount[reasonId] = _amount;
         return reasonId;
     }
-    function getReason(uint256 _reasonId) public returns(string memory) {
-	return reasons[_reasonId];
+    function getReason(uint256 _reasonId) public returns(uint256, string memory) {
+	return (amount[_reasonId], reasons[_reasonId]);
     }
 
     function fillGasTank(uint256 _tokenId, uint256 _amount, uint256 _gasRewards) external nonReentrant{
