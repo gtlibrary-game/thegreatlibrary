@@ -148,6 +148,7 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 
 		//require(cCA == msg.sender || _mintTo == cCA, "Admins only.");
     		BookTradable book =  new BookTradable(_name, _symbol, _bookRegistryAddress, _baseuri, _burnable, _maxmint, _defaultprice, _defaultfrom, gasToken, cCA);
+
 		book.transferOwnership(_mintTo);
 
 		//book.setAddon(address(this)); // would be nice...
@@ -156,8 +157,10 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		return address(book);
     	}
 
+/*
     	function retireBookContract(address _a) public {
         	require(msg.sender == cCA || msg.sender == operator, "no");
     	}
+*/
 
 }

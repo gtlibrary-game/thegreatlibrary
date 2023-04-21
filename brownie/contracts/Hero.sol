@@ -21,8 +21,8 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 	mapping(uint256 => uint) private hHp;		// Editable by itself.  1.0 ether = 100%.
 	mapping(uint256 => uint) private hPower;	// Ditto for 1.0 ether being 100%.
 
-	mapping(uint256 => int) private hAlpha;
-	mapping(uint256 => int) private hBeta;
+	//mapping(uint256 => int) private hAlpha;
+	//mapping(uint256 => int) private hBeta;
 
 	mapping(uint256 => mapping(uint => uint256)) private casts;
 	mapping(uint256 => uint) private maxPower;	// This guy is controled from the items code.
@@ -150,7 +150,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 		hClass[newTokenId] = _class;
 		hHp[newTokenId] = 1 ether;		// This is the percentage of total. To get real total ask the items.
 		hPower[newTokenId] = _amount;
-		hAlpha[newTokenId] = int(_tokenId);	// This is sort of saying that each scene of the book is 1 away from each other..
+		//hAlpha[newTokenId] = int(_tokenId);	// This is sort of saying that each scene of the book is 1 away from each other..
 		hSpawn[newTokenId] = _tokenId;
 
 		emit NewHero(newTokenId, _tokenId, _to, _class, _amount);
@@ -168,6 +168,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 			return (0, 0);  // Dead ... getCurrentPower(_hId));
 		}
 	}
+/*
 	function setAB(uint256 _hId, int _a, int _b) public {
                 require(msg.sender == cCA || isAddon[msg.sender]);
 		
@@ -177,6 +178,7 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 	function getAB(uint256 _hId) public returns(int, int) {
 		return (hAlpha[_hId], hBeta[_hId]);
 	}
+*/
 	event Fizzle(uint256 hId, uint256 target, int how, uint amount, uint fizzleType);
 	function fizzle(uint256 _hId, uint256 _target, int _how, uint _amount, uint _fizzleType) public {
 		emit Fizzle(_hId, _target, _how, _amount, _fizzleType);

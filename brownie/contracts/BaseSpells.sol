@@ -41,8 +41,9 @@ contract BaseSpells is Base {
     	}
         function getXYZ(address _hero, uint256 _hId) public returns(HeroXYZ memory) {
 		Hero hero = Hero(_hero);
-		(int a, int b) = hero.getAB(_hId);
-                return HeroXYZ(hX[_hero][_hId], hY[_hero][_hId], hZ[_hero][_hId], a, b);
+		//(int a, int b) = hero.getAB(_hId);
+                //return HeroXYZ(hX[_hero][_hId], hY[_hero][_hId], hZ[_hero][_hId], a, b);
+                return HeroXYZ(hX[_hero][_hId], hY[_hero][_hId], hZ[_hero][_hId], 0, 0);
         }
         function setXYZ(address _hero, uint256 _hId, int _x, int _y, int _z) public {
                 require(msg.sender == cCA || isAddon[msg.sender], "setXYZ");

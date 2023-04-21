@@ -159,8 +159,10 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
     	return gasToken;
     }
 
+    mapping(uint256 => string) private reasons;
+    uint256 reasonId;
     // This function burns the Culture Coins that the contract owns on behalf of the token owner.
-    function burnGas(uint256 _tokenId, uint256 _amount, string memory _reason) external nonReentrant{
+    function burnGas(uint256 _tokenId, uint256 _amount, string memory _reason) external nonReentrant returns(uint256) {
         address tokenOwner = ownerOf(_tokenId);
         require(msgSender() == tokenOwner || cCA == msgSender(), "Admins only.");
 
@@ -170,6 +172,13 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
         CultureCoin(gasToken).burn(_amount);
 
         emit GasTokenSpent(tokenOwner, _tokenId, _amount, _reason);
+
+	reasonId++;
+	reasons[reasonId] = _reason;
+        return reasonId;
+    }
+    function getReason(uint256 _reasonId) public returns(string memory) {
+	return reasons[_reasonId];
     }
 
     function fillGasTank(uint256 _tokenId, uint256 _amount, uint256 _gasRewards) external nonReentrant{
