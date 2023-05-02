@@ -77,6 +77,7 @@ contract BookTradable is ERC721BookTradable,ReentrancyGuard {
 
         // Transfers the reward token if any.
         if(address(0) != rewardContract && rewardTokenId[tokenId] != 0 && !tokenRewarded[tokenId]) {
+            require(owner() == BookTradable(rewardContract).owner(), "Not owner"); 
             BookTradable(rewardContract).safeTransferFromRegistry(from, to, rewardTokenId[tokenId]);
             tokenRewarded[tokenId] = true;
         }
