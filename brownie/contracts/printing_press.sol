@@ -68,8 +68,6 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		require(B[msg.sender] >= _amount * 2 * _tokenMax,  "Need more CC on the books.");
 
 		_delegateMinter(_to, address(NBT), _tokenMax, _amount, _gasRewards);
-
-		B[msg.sender] -= _amount;
 	}
         function _delegateMinter (address _to, address _NBT, uint _tokenMax, uint _amount, uint _gasRewards) private {
                 BookTradable NBT = BookTradable(_NBT);     //_NBT stands for Daedalus Class Booster Token and it is the token address being boosted here. TLSCBM, etc, ...
