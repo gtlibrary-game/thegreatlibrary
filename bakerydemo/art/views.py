@@ -1322,8 +1322,10 @@ def savefinetune(request):
         return JsonResponse(json_obj, safe=False)
 
 
-@api_view(['POST', ])
+@api_view(['POST', 'GET'])
 def chat(request):
+    return_json = False
+
     if request.method == 'POST':
         #print(dir(request.body))
         print(request.META['CONTENT_TYPE'])
@@ -1337,7 +1339,6 @@ def chat(request):
         chatid_input = ""
         user_input = ""
         context = ""
-        return_json = False
         if request.META['CONTENT_TYPE'] in ["application/json", "multipart/form-data"]:
             user_input = body_unicode;
             print("user_input: " + user_input)
