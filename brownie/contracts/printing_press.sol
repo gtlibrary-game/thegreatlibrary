@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9;
+pragma solidity 0.8.15;
 
 import "./BookTradable.sol";
 import "./CultureCoin.sol";
@@ -24,13 +24,12 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		uint256 ccAmount = CultureCoin(gasToken).dexXMTSPIn{value:xAmount}();
 		B[_whom] += ccAmount;
 	}
-
 	function withdraw(uint256 _amount) public {
 		CultureCoin(gasToken).transferFrom(address(this), msg.sender, _amount);
 		B[msg.sender] -= _amount;
 	}
 
-	event PairPrinted(address parent, address child, uint256 parentId, uint256 childId);
+	//event PairPrinted(address parent, address child, uint256 parentId, uint256 childId);
 	function mintPair(address _to, address _NBT, uint256 _amount, uint256 _gasRewards) public nonReentrant {
 		BookTradable NBT = BookTradable(_NBT);
 
@@ -58,7 +57,7 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 
 		B[msg.sender] -= _amount * 2;
 
-		emit PairPrinted(address(NBT), address(CHILD), parentTokenId, childTokenId);
+		//emit PairPrinted(address(NBT), address(CHILD), parentTokenId, childTokenId);
 	}
         function delegateMinter (address _to, address _NBT, uint _tokenMax, uint _amount, uint _gasRewards) public nonReentrant {
                 BookTradable NBT = BookTradable(_NBT);     //_NBT stands for Daedalus Class Booster Token and it is the token address being boosted here. TLSCBM, etc, ...
@@ -69,8 +68,6 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		require(B[msg.sender] >= _amount * 2 * _tokenMax,  "Need more CC on the books.");
 
 		_delegateMinter(_to, address(NBT), _tokenMax, _amount, _gasRewards);
-
-		B[msg.sender] -= _amount;
 	}
         function _delegateMinter (address _to, address _NBT, uint _tokenMax, uint _amount, uint _gasRewards) private {
                 BookTradable NBT = BookTradable(_NBT);     //_NBT stands for Daedalus Class Booster Token and it is the token address being boosted here. TLSCBM, etc, ...
