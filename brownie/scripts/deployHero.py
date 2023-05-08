@@ -1,4 +1,5 @@
 import os
+import json
 import inspect
 from brownie import *
 
@@ -9,11 +10,18 @@ load_dotenv()
 
 cCA = os.environ['cCA']
 cultureCoinAddress = os.environ['cultureCoinAddress']
-registryAddress = os.environ['marketPlaceAddress']
 
 bookmarkAddress = os.environ['bookmarkAddress']
 baseSpellsAddress = os.environ['baseSpellsAddress']
 myItemsAddress = os.environ['myItemsAddress']
+
+# Load the ABI from disk
+with open('CultureCoin.json') as f:
+    abi = json.load(f)
+
+culture_coin = Contract.from_abi('CultureCoin', cultureCoinAddress, abi)
+print(culture_coin)
+
 
 def main():
     account = accounts.load("Account1")
@@ -26,6 +34,9 @@ def main():
 
     # address _cCA, address _cultureCoin, address _nbt, address _registryAddress, address _baseSpells, address _myItems
 
-    Hero.deploy(cCA, cultureCoinAddress, bookmarkAddress, registryAddress, baseSpellsAddress, myItemsAddress, {"from": account})
+    registryAddress = "0"
+    hero = Hero.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, baseSpellsAddress, myItemsAddress, {"from": account})
+
+    culture_coin.setAddon(hero.address, True, {"from": account})
 
     ### , "gas": gasPrice})
