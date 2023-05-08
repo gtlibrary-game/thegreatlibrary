@@ -284,6 +284,9 @@ contract Hero is BookTradable, Receiver, IERC1155Receiver, LiveTradables /*, Dae
 	function _myMod(int _class) internal view returns(int) {
 		return ((_class -1) % 150) + 1;
 	}
+        function getClass(uint256 _hId) public view returns(int) {
+                return hClass[_hId];
+        }
 	function canCast(uint256 _hId, int _spell) public view returns(bool) {
 		return _spell >= _myMod(hClass[_hId]-14) && _spell <= _myMod(hClass[_hId]+15);
 	}
