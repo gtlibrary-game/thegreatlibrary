@@ -25,7 +25,7 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 		B[_whom] += ccAmount;
 	}
 	function withdraw(uint256 _amount) public {
-		CultureCoin(gasToken).transferFrom(address(this), msg.sender, _amount);
+		CultureCoin(gasToken).transfer(msg.sender, _amount);
 		B[msg.sender] -= _amount;
 	}
 
