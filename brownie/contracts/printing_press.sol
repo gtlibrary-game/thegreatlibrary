@@ -138,7 +138,8 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
 	}
 
     	// /// To the Moon. Hold on to your books boys, we are shooting this baby to the moon. And back. /// //
-    	event BookContract(address who, address what);  // <--author,nbt // see culture coin
+    	//event BookContract(address who, address what);  // <--author,nbt // see culture coin
+        mapping(address => bool) private ourContract;
     	function newBookContract(string memory _name, string memory _symbol, address _bookRegistryAddress, string memory _baseuri,
                                         bool _burnable, uint256 _maxmint, uint256 _defaultprice, uint256 _defaultfrom,
 					address _mintTo) public returns(address) { //, address _gasToken) {
@@ -147,12 +148,16 @@ contract PrintingPress is Receiver, ReentrancyGuard { // is Ownable { // because
     		BookTradable book =  new BookTradable(_name, _symbol, _bookRegistryAddress, _baseuri, _burnable, _maxmint, _defaultprice, _defaultfrom, gasToken, cCA);
 
 		book.transferOwnership(_mintTo);
+                ourContract[address(book)] = true;
 
 		//book.setAddon(address(this)); // would be nice...
-		
-		emit BookContract(_mintTo, address(book));
+		//emit BookContract(_mintTo, address(book));
+
 		return address(book);
     	}
+        function isOurContact(address _book) public view returns(bool) {
+		return ourContract[_book];
+	}
 
 /*
     	function retireBookContract(address _a) public {
