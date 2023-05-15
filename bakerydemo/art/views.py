@@ -1612,7 +1612,7 @@ def get_privacy_policy(request):
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Privacy Policy for Bengi the AI Writing Assistant Cat</title>
+	<title>Privacy Policy for Benji the AI Writing Assistant Cat</title>
 </head>
 <body>
 
@@ -1628,26 +1628,26 @@ def get_terms_of_service(request):
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Terms of Service for Bengi the AI Writing Assistant Cat</title>
+	<title>Terms of Service for Benji the AI Writing Assistant Cat</title>
 </head>
 <body>
-	<h1>Terms of Service for Bengi the AI Writing Assistant Cat</h1>
-	<p>By using Bengi the AI Writing Assistant Cat, you agree to be bound by the following terms and conditions:</p>
+	<h1>Terms of Service for Benji the AI Writing Assistant Cat</h1>
+	<p>By using Benji the AI Writing Assistant Cat, you agree to be bound by the following terms and conditions:</p>
 
 	<h2>Use of Service</h2>
-	<p>Bengi the AI Writing Assistant Cat is a Google Doc add-on that assists users with writing prompts and texts by utilizing the OpenAI language model. By using our service, you agree to use it solely for lawful purposes and not to violate any applicable laws, regulations, or third-party rights.</p>
+	<p>Benji the AI Writing Assistant Cat is a Google Doc add-on that assists users with writing prompts and texts by utilizing the OpenAI language model. By using our service, you agree to use it solely for lawful purposes and not to violate any applicable laws, regulations, or third-party rights.</p>
 
 	<h2>Intellectual Property</h2>
-	<p>All content and materials on Bengi the AI Writing Assistant Cat, including but not limited to the software, text, graphics, images, and logos, are the property of Writers Best Publishing and are protected by copyright, trademark, and other intellectual property laws. You may not use, reproduce, distribute, or modify any content or materials on Bengi the AI Writing Assistant Cat without our prior written consent.</p>
+	<p>All content and materials on Benji the AI Writing Assistant Cat, including but not limited to the software, text, graphics, images, and logos, are the property of Writers Best Publishing and are protected by copyright, trademark, and other intellectual property laws. You may not use, reproduce, distribute, or modify any content or materials on Benji the AI Writing Assistant Cat without our prior written consent.</p>
 
 	<h2>Limitation of Liability</h2>
-	<p>Bengi the AI Writing Assistant Cat is provided "as is" without any warranty of any kind, express or implied. We do not guarantee the accuracy, completeness, or reliability of the content and materials on our service. We shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with the use of our service.</p>
+	<p>Benji the AI Writing Assistant Cat is provided "as is" without any warranty of any kind, express or implied. We do not guarantee the accuracy, completeness, or reliability of the content and materials on our service. We shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with the use of our service.</p>
 
 	<h2>Indemnification</h2>
 	<p>You agree to indemnify, defend, and hold Writers Best Publishing and its affiliates, officers, directors, employees, agents, and licensors harmless from any claim or demand, including reasonable attorneys' fees, made by any third party due to or arising out of your use of our service, your violation of these terms and conditions, or your violation of any applicable laws or regulations.</p>
 
 	<h2>Modification of Terms</h2>
-	<p>We reserve the right to modify or update these terms and conditions at any time without prior notice. Your continued use of Bengi the AI Writing Assistant Cat after any modifications to these terms constitutes your acceptance of the changes.</p>
+	<p>We reserve the right to modify or update these terms and conditions at any time without prior notice. Your continued use of Benji the AI Writing Assistant Cat after any modifications to these terms constitutes your acceptance of the changes.</p>
 
 	<h2>Contact Us</h2>
 	<p>If you have any questions or concerns about our terms and conditions, please contact us at johnrraymond@greatlibrary.io.</p>
