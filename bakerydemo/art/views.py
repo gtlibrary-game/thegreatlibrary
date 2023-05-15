@@ -1612,26 +1612,12 @@ def get_privacy_policy(request):
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Privacy Policy for Bengi the AI Writing Assistant Cat</title>
+	<title>Privacy Policy for Benji the AI Writing Assistant Cat</title>
 </head>
 <body>
-	<h1>Privacy Policy for Bengi the AI Writing Assistant Cat</h1>
-	<p>Bengi the AI Writing Assistant Cat is a Google Doc add-on that helps users with writing prompts and texts by utilizing the OpenAI language model. The privacy of our users is of utmost importance to us. </p>
 
-	<h2>Data Collection</h2>
-	<p>Bengi the AI Writing Assistant Cat only collects prompts and texts sent through the system. This data is used solely to fine-tune the underlying OpenAI language model and improve the quality of the writing suggestions provided to users.</p>
+<h1 class="c16" id="h.ox9714taeu9z"><span class="c7">Privacy Policy for Benji</span></h1><p class="c4"><span class="c1">Privacy Policy for Benji the AI Writing Assistant Cat</span></p><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">Benji the AI Writing Assistant Cat is a Google Doc add-on that helps users with writing prompts and texts by utilizing the OpenAI language model. The privacy of our users is of utmost importance to us.</span></p><p class="c2"><span class="c1"></span></p><h2 class="c17" id="h.9yke3qom4udf"><span class="c0">Data Collection</span></h2><p class="c4"><span class="c1">Benji the AI Writing Assistant Cat only collects prompts and texts sent through the system. This data is used solely to fine-tune the underlying OpenAI language model and improve the quality of the writing suggestions provided to users.</span></p><p class="c2"><span class="c1"></span></p><h2 class="c17" id="h.4vt3z5trrl9d"><span class="c0">Data Usage</span></h2><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">Any and all data collected by Benji the AI Writing Assistant Cat may be used to finetune the underlying OpenAI language model. We do not share, sell, or rent this data to third parties, except as outlined below:</span></p><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">- To provide or improve appropriate access or user-facing features that are visible and prominent in the requesting application&#39;s user interface and only with the user&#39;s consent;</span></p><p class="c4"><span class="c1">- For security purposes (for example, investigating abuse);</span></p><p class="c4"><span class="c1">- To comply with applicable laws; or,</span></p><p class="c4"><span class="c1">- As part of a merger, acquisition, or sale of assets of the developer after obtaining explicit prior consent from the user.</span></p><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">We will obtain explicit prior consent from the user before transferring data as part of a merger, acquisition, or sale of assets of the developer.</span></p><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">We do not allow humans to read the data, except in the following circumstances:</span></p><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">- We first obtained the user&#39;s affirmative agreement to view specific messages, files, or other data, with the limited exception of use cases approved by Google under additional terms applicable to the Nest Device Access program;</span></p><p class="c4"><span class="c1">- It is necessary for security purposes (for example, investigating a bug or abuse);</span></p><p class="c4"><span class="c1">- It is necessary to comply with applicable law; or</span></p><p class="c4"><span class="c1">- The data (including derivations) is aggregated and used for internal operations in accordance with applicable privacy and other jurisdictional legal requirements.</span></p><p class="c2"><span class="c1"></span></p><h2 class="c17" id="h.ef56eks84fjt"><span class="c0">Security</span></h2><p class="c4"><span class="c1">We take the security and privacy of our users&#39; data seriously. We use industry-standard security measures to protect against unauthorized access, alteration, disclosure, or destruction of data. Our servers are regularly updated with the latest security patches, and we conduct regular security audits to ensure the safety of our users&#39; data.</span></p><p class="c2"><span class="c1"></span></p><h2 class="c17" id="h.p9x6j6937o7o"><span class="c0">Changes to Privacy Policy</span></h2><p class="c2"><span class="c1"></span></p><p class="c4"><span class="c1">We reserve the right to modify or update this privacy policy at any time without prior notice. We encourage users to review this policy periodically for any changes. Your continued use of Benji the AI Writing Assistant Cat after any modifications to this policy constitutes your acceptance of the changes.</span></p><p class="c2"><span class="c1"></span></p><h2 class="c17" id="h.d7sl4g2tlpl3"><span class="c0">Contact Us</span></h2><p class="c2"><span class="c1"></span></p><p class="c4"><span>If you have any questions or concerns about our privacy policy or the data we collect, please contact us at </span><span class="c6"><a class="c12" href="mailto:johnrraymond@greatlibrary.io">johnrraymond@greatlibrary.io</a></span><span class="c1">.</span></p><p class="c2"><span class="c1"></span></p>
 
-	<h2>Data Usage</h2>
-	<p>Any and all data collected by Bengi the AI Writing Assistant Cat may be used to finetune the underlying OpenAI language model. We do not share, sell, or rent this data to third parties. The data is securely stored on our servers and is used only for improving the quality of the writing suggestions provided to users.</p>
-
-	<h2>Security</h2>
-	<p>We take the security and privacy of our users' data seriously. We use industry-standard security measures to protect against unauthorized access, alteration, disclosure, or destruction of data. Our servers are regularly updated with the latest security patches, and we conduct regular security audits to ensure the safety of our users' data.</p>
-
-	<h2>Changes to Privacy Policy</h2>
-	<p>We reserve the right to modify or update this privacy policy at any time without prior notice. We encourage users to review this policy periodically for any changes. Your continued use of Bengi the AI Writing Assistant Cat after any modifications to this policy constitutes your acceptance of the changes.</p>
-
-	<h2>Contact Us</h2>
-	<p>If you have any questions or concerns about our privacy policy or the data we collect, please contact us at johnrraymond@greatlibrary.io</p>
 </body>
 </html>
 """
@@ -1642,26 +1628,26 @@ def get_terms_of_service(request):
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Terms of Service for Bengi the AI Writing Assistant Cat</title>
+	<title>Terms of Service for Benji the AI Writing Assistant Cat</title>
 </head>
 <body>
-	<h1>Terms of Service for Bengi the AI Writing Assistant Cat</h1>
-	<p>By using Bengi the AI Writing Assistant Cat, you agree to be bound by the following terms and conditions:</p>
+	<h1>Terms of Service for Benji the AI Writing Assistant Cat</h1>
+	<p>By using Benji the AI Writing Assistant Cat, you agree to be bound by the following terms and conditions:</p>
 
 	<h2>Use of Service</h2>
-	<p>Bengi the AI Writing Assistant Cat is a Google Doc add-on that assists users with writing prompts and texts by utilizing the OpenAI language model. By using our service, you agree to use it solely for lawful purposes and not to violate any applicable laws, regulations, or third-party rights.</p>
+	<p>Benji the AI Writing Assistant Cat is a Google Doc add-on that assists users with writing prompts and texts by utilizing the OpenAI language model. By using our service, you agree to use it solely for lawful purposes and not to violate any applicable laws, regulations, or third-party rights.</p>
 
 	<h2>Intellectual Property</h2>
-	<p>All content and materials on Bengi the AI Writing Assistant Cat, including but not limited to the software, text, graphics, images, and logos, are the property of Writers Best Publishing and are protected by copyright, trademark, and other intellectual property laws. You may not use, reproduce, distribute, or modify any content or materials on Bengi the AI Writing Assistant Cat without our prior written consent.</p>
+	<p>All content and materials on Benji the AI Writing Assistant Cat, including but not limited to the software, text, graphics, images, and logos, are the property of Writers Best Publishing and are protected by copyright, trademark, and other intellectual property laws. You may not use, reproduce, distribute, or modify any content or materials on Benji the AI Writing Assistant Cat without our prior written consent.</p>
 
 	<h2>Limitation of Liability</h2>
-	<p>Bengi the AI Writing Assistant Cat is provided "as is" without any warranty of any kind, express or implied. We do not guarantee the accuracy, completeness, or reliability of the content and materials on our service. We shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with the use of our service.</p>
+	<p>Benji the AI Writing Assistant Cat is provided "as is" without any warranty of any kind, express or implied. We do not guarantee the accuracy, completeness, or reliability of the content and materials on our service. We shall not be liable for any direct, indirect, incidental, special, or consequential damages arising out of or in connection with the use of our service.</p>
 
 	<h2>Indemnification</h2>
 	<p>You agree to indemnify, defend, and hold Writers Best Publishing and its affiliates, officers, directors, employees, agents, and licensors harmless from any claim or demand, including reasonable attorneys' fees, made by any third party due to or arising out of your use of our service, your violation of these terms and conditions, or your violation of any applicable laws or regulations.</p>
 
 	<h2>Modification of Terms</h2>
-	<p>We reserve the right to modify or update these terms and conditions at any time without prior notice. Your continued use of Bengi the AI Writing Assistant Cat after any modifications to these terms constitutes your acceptance of the changes.</p>
+	<p>We reserve the right to modify or update these terms and conditions at any time without prior notice. Your continued use of Benji the AI Writing Assistant Cat after any modifications to these terms constitutes your acceptance of the changes.</p>
 
 	<h2>Contact Us</h2>
 	<p>If you have any questions or concerns about our terms and conditions, please contact us at johnrraymond@greatlibrary.io.</p>
