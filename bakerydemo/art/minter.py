@@ -9,10 +9,10 @@ moralisdir = "/home/john/bakerydemo/moralis/"
 #lawrenceStanleyAddress = "" # unknown
 ##cultureCoinAddress = "0xc3bF7d5949C9Bfe74D0222f9C47d2443F181D50B"
 
-cultureCoinAddress = os.environ['cultureCoinAddress']
-if not cultureCoinAddress:
-    print("Please set the environment variable 'cultureCoinAddress'")
-    exit(1)
+#cultureCoinAddress = os.environ['cultureCoinAddress']
+#if not cultureCoinAddress:
+    #print("Please set the environment variable 'cultureCoinAddress'")
+    #exit(1)
 
 from bakerydemo.art.moralis import Moralis
 moralis = Moralis()
