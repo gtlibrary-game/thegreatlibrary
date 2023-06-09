@@ -60,9 +60,11 @@ contract MiniMart is Receiver, ReentrancyGuard {
         uint256 operatorCut = (msg.value * operatorFee) / 100;          // Divide to make it a percent.
         uint256 royalties = (msg.value * ownerFee) / 100;               // Divide to make it a percent.
 
-        balances[owner] += msg.value - royalties - operatorCut;
+        uint256 owner_balance = msg.value - royalties - operatorCut;
         balances[operator] += operatorCut;
         balances[hostContract.owner()] += royalties;
+
+	payable(owner).transfer(owner_balance);
 
         emit Sold(_hostContract, _tokenId, msg.value);
     }
@@ -82,9 +84,11 @@ contract MiniMart is Receiver, ReentrancyGuard {
         uint256 operatorCut = (msgValue * operatorFee) / 100;          // Divide to make it a percent.
         uint256 royalties = (msgValue * ownerFee) / 100;               // Divide to make it a percent.
 
-        balances[owner] += msgValue - royalties - operatorCut;
+        uint256 owner_balance = msgValue - royalties - operatorCut;
         balances[operator] += operatorCut;
         balances[hostContract.owner()] += royalties;
+
+	payable(owner).transfer(owner_balance);
 
         emit Sold(_hostContract, _tokenId, msgValue);
     }
