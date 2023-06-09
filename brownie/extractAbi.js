@@ -11,7 +11,7 @@ function extractABI(filePath) {
 }
 
 const contracts = ["CultureCoin", "BookTradable", "MarketPlace", "PrintingPress",  "TheGoldenKeys", "BEN", "GamblersUnionBEN", "BaseSpells", "BaseLoot", 
-     "MyItems", "Hero", "TimeCube", "Vesting", "TokenPreSale", "MiniMart", "DraculaLoot", "DraculaHero", "Relics", "Tombstone"];
+     "MyItems", "Hero", "TimeCube", "Vesting", "TokenPreSale", "MiniMart", "DraculaLoot", "DraculaHero", "Relics", "Tombstone", "AuctionHouse"];
 
 for(let i = 0; i < contracts.length; i++) {
 	const contract = contracts[i];
