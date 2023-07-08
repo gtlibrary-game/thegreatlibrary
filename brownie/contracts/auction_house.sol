@@ -36,6 +36,10 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         operatorFee = _fee;
     }
 
+    function getPrice(address _hostContract, uint _tokenId) external view returns(uint) {
+	return price[_hostContract][_tokenId];		// If 0 then not for sale.
+    }
+
     function sell(address _hostContract, uint _tokenId, uint _price) external nonReentrant returns(bytes32) {
         BookTradable book = BookTradable(_hostContract);
         address owner = book.ownerOf(_tokenId);
