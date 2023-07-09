@@ -1,0 +1,13 @@
+Deploy in this order:
+
+scripts/deployRelics.py
+
+scripts/deployDraculaHero.py
+
+scripts/deployDraculaLoot.py
+scripts/deployDraculaLootProxy.py
+
+scripts/deployTombstone.py
+scripts/deployTomestoneProxy.py
+
+scripts/setupDracula.py

@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+import "./LiveTradables.sol";
 import "./BookTradable.sol";
 import "./CultureCoin.sol";
+import "./LiveTradables.sol";
 import "./send_receive.sol";
 import "../openzeppelin-solidity/contracts/security/ReentrancyGuard.sol";
 
-contract MiniMart is Receiver, ReentrancyGuard {
+contract AuctionHouse is Receiver, ReentrancyGuard {
 
     event OnSale(address indexed hostContract, address indexed offerer, uint tokenId, uint price);
-    event Sold(address indexed hostContract, uint tokenId, uint256 price);
     event BalanceWithdrawn (address indexed beneficiary, uint amount);
     event OperatorChanged (address previousOperator, address newOperator);
 
@@ -35,9 +36,13 @@ contract MiniMart is Receiver, ReentrancyGuard {
         operatorFee = _fee;
     }
 
+    function getPrice(address _hostContract, uint _tokenId) external view returns(uint) {
+	return price[_hostContract][_tokenId];		// If 0 then not for sale.
+    }
+
     function sell(address _hostContract, uint _tokenId, uint _price) external nonReentrant returns(bytes32) {
-        BookTradable hostContract = BookTradable(_hostContract);
-        address owner = hostContract.ownerOf(_tokenId);
+        BookTradable book = BookTradable(_hostContract);
+        address owner = book.ownerOf(_tokenId);
         require(msg.sender == owner, "Caller does not own token");
 
         price[_hostContract][_tokenId] = _price;
@@ -46,51 +51,62 @@ contract MiniMart is Receiver, ReentrancyGuard {
     }
 
     function buy(address _hostContract, uint _tokenId) external nonReentrant payable {
-        BookTradable hostContract = BookTradable(_hostContract);
-        address owner = hostContract.ownerOf(_tokenId);
+        LiveTradables live = LiveTradables(_hostContract);
+        BookTradable book = BookTradable(_hostContract);
+        address owner = book.ownerOf(_tokenId);
         require(price[_hostContract][_tokenId] > 0, "No price set for this token.");
         require(msg.value >= price[_hostContract][_tokenId], "Not enough funds to buy.");
 
-        hostContract.safeTransferFromRegistry(owner, msg.sender, _tokenId);
+        book.safeTransferFromRegistry(owner, msg.sender, _tokenId);
 
         price[_hostContract][_tokenId] = 0;
 
-        uint256 ownerFee = hostContract.getRoyalty();
+        uint256 ownerFee = book.getRoyalty();
+
+	address bookmark_address = live.getNBT();
+	uint256 bookmark_id = live.getSpawn(_tokenId);
+	address bookmark_owner = BookTradable(bookmark_address).ownerOf(bookmark_id);
 
         uint256 operatorCut = (msg.value * operatorFee) / 100;          // Divide to make it a percent.
         uint256 royalties = (msg.value * ownerFee) / 100;               // Divide to make it a percent.
+        uint256 royalties2 = (msg.value * ownerFee) / 100;              // Divide to make it a percent.
 
-        uint256 owner_balance = msg.value - royalties - operatorCut;
+        uint256 owner_balance = msg.value - royalties - royalties2 - operatorCut;
         balances[operator] += operatorCut;
-        balances[hostContract.owner()] += royalties;
+        balances[book.owner()] += royalties;
 
 	payable(owner).transfer(owner_balance);
+	payable(bookmark_owner).transfer(royalties2);
 
-        emit Sold(_hostContract, _tokenId, msg.value);
     }
 
     function buyWithCC(address _hostContract, uint _tokenId, uint256 _amount) external nonReentrant {
         CultureCoin CC = CultureCoin(gasToken);
-        BookTradable hostContract = BookTradable(_hostContract);
-        address owner = hostContract.ownerOf(_tokenId);
+        LiveTradables live = LiveTradables(_hostContract);
+        BookTradable book = BookTradable(_hostContract);
+        address owner = book.ownerOf(_tokenId);
         uint256 msgValue = CC.dexCCInFrom(msg.sender, _amount);
         require(msgValue >=  price[_hostContract][_tokenId], "Not enough funds to buy");
         require(price[_hostContract][_tokenId] > 0, "No price set for this token.");
 
-        hostContract.safeTransferFromRegistry(owner, msg.sender, _tokenId);
+        book.safeTransferFromRegistry(owner, msg.sender, _tokenId);
 
-        uint256 ownerFee = hostContract.getRoyalty();
+        uint256 ownerFee = book.getRoyalty();
+
+        address bookmark_address = live.getNBT();
+        uint256 bookmark_id = live.getSpawn(_tokenId);
+        address bookmark_owner = BookTradable(bookmark_address).ownerOf(bookmark_id);
 
         uint256 operatorCut = (msgValue * operatorFee) / 100;          // Divide to make it a percent.
         uint256 royalties = (msgValue * ownerFee) / 100;               // Divide to make it a percent.
+        uint256 royalties2 = (msgValue * ownerFee) / 100;               // Divide to make it a percent.
 
         uint256 owner_balance = msgValue - royalties - operatorCut;
         balances[operator] += operatorCut;
-        balances[hostContract.owner()] += royalties;
+        balances[book.owner()] += royalties;
 
 	payable(owner).transfer(owner_balance);
-
-        emit Sold(_hostContract, _tokenId, msgValue);
+	payable(bookmark_owner).transfer(royalties2);
     }
 
     function withdrawBalance() external nonReentrant {
