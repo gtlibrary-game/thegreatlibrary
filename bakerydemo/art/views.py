@@ -1133,7 +1133,7 @@ def generate_chat_response(message_arr, context, chatid_input):
 
     thread_message = [thread_stub] + message_arr
     #print("thread_message: " + str(thread_message))
-    completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=thread_message, temperature=0.0)
+    completion = openai.ChatCompletion.create(model="gpt-4", messages=thread_message, temperature=0.0)
     return [completion.choices[0].message, context, chatid_input]
 
 def get_seed():
