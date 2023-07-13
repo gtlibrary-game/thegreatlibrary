@@ -24,21 +24,6 @@ for(let i = 0; i < contracts.length; i++) {
 	if(true) {
 		for(let j = 0; j < abi.length; j++) {
 			// This means there could be collisions so be careful.
-			if(`${contract}` == "DraculaHero" && abi[j].name == "heroMint") {
-    				fs.writeFileSync(`./DraculaHeroMintABI.cs`, `string DraculaHeroMintABI = "[`
-                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
-                                        `]";`);
-			}
-			if(`${contract}` == "DraculaHero" && abi[j].name == "balanceOf") {
-    				fs.writeFileSync(`./DraculaHeroBalanceOfABI.cs`, `string DraculaHeroBalanceOfABI = "[`
-                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
-                                        `]";`);
-			}
-			if(`${contract}` == "DraculaHero" && abi[j].name == "tokenOfOwnerByIndex") {
-    				fs.writeFileSync(`./DraculaHeroTOBIABI.cs`, `string DraculaHeroTOBIABI = "[`
-                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
-                                        `]";`);
-			}
 			if(abi[j].name == "OfferingPlaced") {
     				fs.writeFileSync(`./MarketPlace-OfferingPlaced.json`, JSON.stringify(abi[j]));
 			}
