@@ -20,6 +20,7 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
     mapping (address => uint) balances;
 
     mapping(address => mapping(uint256 => uint256)) public price;
+    mapping(address => uint256[]) public saletokenlist;
 
     address private cCA;        /// Adminisistrator
     address private gasToken;   /// culturecoin.
@@ -36,18 +37,39 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         operatorFee = _fee;
     }
 
-    function getPrice(address _hostContract, uint _tokenId) external view returns(uint) {
-	return price[_hostContract][_tokenId];		// If 0 then not for sale.
-    }
-
     function sell(address _hostContract, uint _tokenId, uint _price) external nonReentrant returns(bytes32) {
         BookTradable book = BookTradable(_hostContract);
         address owner = book.ownerOf(_tokenId);
         require(msg.sender == owner, "Caller does not own token");
 
         price[_hostContract][_tokenId] = _price;
+        saletokenlist[_hostContract].push(_tokenId);
 
         emit OnSale(_hostContract, owner, _tokenId, _price);
+    }
+
+    function send(address _receiver, address _hostContract, uint _tokenId) external nonReentrant returns(bytes32) {
+        BookTradable book = BookTradable(_hostContract);
+        address owner = book.ownerOf(_tokenId);
+        require(msg.sender == owner, "Caller does not own token");
+        book.transferFrom(msg.sender, _receiver, _tokenId);
+
+        price[_hostContract][_tokenId] = 0;
+        _removeTokenId(_hostContract, _tokenId);
+    }
+
+    function _removeTokenId(address _hostContract, uint _tokenId) internal {
+        
+        for (uint i = 0; i < saletokenlist[_hostContract].length - 1; i++) {
+            if(_tokenId == saletokenlist[_hostContract][i]) {
+                saletokenlist[_hostContract][i] = saletokenlist[_hostContract][i+1];
+                saletokenlist[_hostContract].pop();
+            }
+        }
+    }
+
+    function getSaleTokenId(address _hostContract) external view returns(uint256[] memory) {
+        return saletokenlist[_hostContract];
     }
 
     function buy(address _hostContract, uint _tokenId) external nonReentrant payable {
@@ -133,4 +155,3 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         gasToken = _gasToken; // The new CC's address.
     }
 }
-
