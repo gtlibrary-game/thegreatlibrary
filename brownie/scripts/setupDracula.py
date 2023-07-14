@@ -42,7 +42,7 @@ def main():
     print("Balance:", account.balance())
     print("Nonce:", account.nonce)
 
-    print("CC")
+    print("CC setAddon (AuctionHouse)")
     CC.setAddon(auctionHouseAddress, True,  {"from": account})
 
     # Deploy the contract
@@ -57,7 +57,7 @@ def main():
     relics.setAddon(auctionHouseAddress, True, {"from": account})
     
     # Need the auction house as an addon too.
-    print("Setting up the heores contract addon (AutionHouse)...")
+    print("Setting up the heroes contract addon (AutionHouse)...")
     heroes.setAddon(auctionHouseAddress, True, {"from": account})
 
 
