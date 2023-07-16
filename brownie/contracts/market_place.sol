@@ -78,6 +78,7 @@ contract MarketPlace is Receiver, ReentrancyGuard {
 	return offeringId;
     }
     function closeOfferingRoyalty(bytes32 _offeringId) external nonReentrant payable {
+	require(operatorFee <= 100, "This contract is a brick (003)");
         require(msg.value >= offeringRegistry[_offeringId].price, "Not enough funds to buy");
         require(offeringRegistry[_offeringId].closed != true, "Offering is closed");
         BookTradable hostContract = BookTradable(offeringRegistry[_offeringId].hostContract);
@@ -97,6 +98,7 @@ contract MarketPlace is Receiver, ReentrancyGuard {
     } 
 
     function closeOfferingRoyaltyCC(bytes32 _offeringId, uint256 _amount) external nonReentrant {
+	require(operatorFee <= 100, "This contract is a brick (004)");
 	CultureCoin CC = CultureCoin(gasToken);
     	uint256 msgValue = CC.dexCCInFrom(msg.sender, _amount);
     	require(msgValue >= offeringRegistry[_offeringId].price, "Not enough funds to buy");

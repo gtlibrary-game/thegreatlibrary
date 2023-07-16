@@ -20,8 +20,6 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
     mapping (address => uint) balances;
 
     mapping(address => mapping(uint256 => uint256)) public price;
-    mapping(address => mapping(uint256 => bool)) public _isavailable;
-    mapping(address => uint256[]) public saletokenlist;
 
     address private cCA;        /// Adminisistrator
     address private gasToken;   /// culturecoin.
@@ -45,44 +43,11 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
 
         price[_hostContract][_tokenId] = _price;
 
-        if(_isavailable[_hostContract][_tokenId] == false) {
-            saletokenlist[_hostContract].push(_tokenId);
-        }
-
-        _isavailable[_hostContract][_tokenId] = true;
-
         emit OnSale(_hostContract, owner, _tokenId, _price);
     }
 
-    function send(address _receiver, address _hostContract, uint _tokenId) external nonReentrant returns(bytes32) {
-        BookTradable book = BookTradable(_hostContract);
-        address owner = book.ownerOf(_tokenId);
-        require(msg.sender == owner, "Caller does not own token");
-        book.transferFrom(msg.sender, _receiver, _tokenId);
-
-        price[_hostContract][_tokenId] = 0;
-        _removeTokenId(_hostContract, _tokenId);
-
-        if(_isavailable[_hostContract][_tokenId] == true) {
-            _isavailable[_hostContract][_tokenId] = false;
-        }
-    }
-    // add remove function
-    function _removeTokenId(address _hostContract, uint _tokenId) internal {
-        
-        for (uint i = 0; i < saletokenlist[_hostContract].length - 1; i++) {
-            if(_tokenId == saletokenlist[_hostContract][i]) {
-                saletokenlist[_hostContract][i] = saletokenlist[_hostContract][saletokenlist[_hostContract].length - 1];
-                saletokenlist[_hostContract].pop();
-            }
-        }
-    }
-
-    function getSaleTokenId(address _hostContract) external view returns(uint256[] memory) {
-        return saletokenlist[_hostContract];
-    }
-
     function buy(address _hostContract, uint _tokenId) external nonReentrant payable {
+	requite(operatorFee <= 100, "This acutionhouse contract is a brick. (001)");
         LiveTradables live = LiveTradables(_hostContract);
         BookTradable book = BookTradable(_hostContract);
         address owner = book.ownerOf(_tokenId);
@@ -92,17 +57,12 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         book.safeTransferFromRegistry(owner, msg.sender, _tokenId);
 
         price[_hostContract][_tokenId] = 0;
-        _removeTokenId(_hostContract, _tokenId);
-        
-        if(_isavailable[_hostContract][_tokenId] == true) {
-            _isavailable[_hostContract][_tokenId] = false;
-        }
 
         uint256 ownerFee = book.getRoyalty();
 
-        address bookmark_address = live.getNBT();
-        uint256 bookmark_id = live.getSpawn(_tokenId);
-        address bookmark_owner = BookTradable(bookmark_address).ownerOf(bookmark_id);
+	address bookmark_address = live.getNBT();
+	uint256 bookmark_id = live.getSpawn(_tokenId);
+	address bookmark_owner = BookTradable(bookmark_address).ownerOf(bookmark_id);
 
         uint256 operatorCut = (msg.value * operatorFee) / 100;          // Divide to make it a percent.
         uint256 royalties = (msg.value * ownerFee) / 100;               // Divide to make it a percent.
@@ -112,12 +72,13 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         balances[operator] += operatorCut;
         balances[book.owner()] += royalties;
 
-        payable(owner).transfer(owner_balance);
-        payable(bookmark_owner).transfer(royalties2);
+	payable(owner).transfer(owner_balance);
+	payable(bookmark_owner).transfer(royalties2);
 
     }
 
     function buyWithCC(address _hostContract, uint _tokenId, uint256 _amount) external nonReentrant {
+	requite(operatorFee <= 100, "This acutionhouse contract is a brick. (002)");
         CultureCoin CC = CultureCoin(gasToken);
         LiveTradables live = LiveTradables(_hostContract);
         BookTradable book = BookTradable(_hostContract);
@@ -127,13 +88,8 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         require(price[_hostContract][_tokenId] > 0, "No price set for this token.");
 
         book.safeTransferFromRegistry(owner, msg.sender, _tokenId);
-        
-        price[_hostContract][_tokenId] = 0;
-        _removeTokenId(_hostContract, _tokenId);
-        
-        if(_isavailable[_hostContract][_tokenId] == true) {
-            _isavailable[_hostContract][_tokenId] = false;
-        }
+
+	price[_hostContract][_tokenId] = 0;
 
         uint256 ownerFee = book.getRoyalty();
 
@@ -149,8 +105,8 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         balances[operator] += operatorCut;
         balances[book.owner()] += royalties;
 
-        payable(owner).transfer(owner_balance);
-        payable(bookmark_owner).transfer(royalties2);
+	payable(owner).transfer(owner_balance);
+	payable(bookmark_owner).transfer(royalties2);
     }
 
     function withdrawBalance() external nonReentrant {

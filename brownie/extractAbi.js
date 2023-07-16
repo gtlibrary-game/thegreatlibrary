@@ -24,6 +24,11 @@ for(let i = 0; i < contracts.length; i++) {
 	if(true) {
 		for(let j = 0; j < abi.length; j++) {
 			// This means there could be collisions so be careful.
+			if(`${contract}` == "Relics" && abi[j].name == "transferFrom") {
+    				fs.writeFileSync(`./RelicsTransferFrom.cs`, `string RelicsTransferFromABI = "[`
+                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
+                                        `]";`);
+			}
 			if(`${contract}` == "DraculaHero" && abi[j].name == "heroMint") {
     				fs.writeFileSync(`./DraculaHeroMintABI.cs`, `string DraculaHeroMintABI = "[`
                                         + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
@@ -38,6 +43,29 @@ for(let i = 0; i < contracts.length; i++) {
     				fs.writeFileSync(`./DraculaHeroTOBIABI.cs`, `string DraculaHeroTOBIABI = "[`
                                         + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
                                         `]";`);
+			}
+			if(`${contract}` == "DraculaHero" && abi[j].name == "ownerOf") {
+    				fs.writeFileSync(`./DraculaHeroOOABI.cs`, `string DraculaHeroOOABI = "[`
+                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
+                                        `]";`);
+			}
+			if(`${contract}` == "DraculaHero" && abi[j].name == "totalSupply") {
+    				fs.writeFileSync(`./DraculaHeroTSABI.cs`, `string DraculaHeroTSABI = "[`
+                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
+                                        `]";`);
+			}
+			if(`${contract}` == "DraculaHero" && abi[j].name == "tokenByIndex") {
+    				fs.writeFileSync(`./DraculaHeroTBIABI.cs`, `string DraculaHeroTBIABI = "[`
+                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
+                                        `]";`);
+			}
+			if(`${contract}` == "DraculaLoot" && abi[j].name == "mintLoot") {
+    				fs.writeFileSync(`./DraculaLootMint.cs`, `string DraculaLootMintABI = "[`
+                                        + JSON.stringify(abi[j]).replace(/"/g, '\\"') +
+                                        `]";`);
+			}
+			if(`${contract}` == "Relics" && abi[j].name == "transferFrom") {
+    				fs.writeFileSync(`./RelicsTransferFrom.json`, "[" + JSON.stringify(abi[j]) + "]");
 			}
 			if(abi[j].name == "OfferingPlaced") {
     				fs.writeFileSync(`./MarketPlace-OfferingPlaced.json`, JSON.stringify(abi[j]));

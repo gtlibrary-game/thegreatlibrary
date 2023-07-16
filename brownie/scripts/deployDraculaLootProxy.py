@@ -16,8 +16,8 @@ print("Using proxyAdmin: " + proxyAdmin)
 
 from scripts.helpful_scripts import encode_function_data
 
-## address _cCA, address _cultureCoin, address _baseSpells, string memory _uri
-encoded_initializer_function = encode_function_data(DraculaLoot[-1].initialize, cCA, "https://greatlinbrary.io/games/DRAC/BaseLoot/")
+## address _cCA, address _cultureCoin, address _baseSpells, string memory _uri # This is .0155 CC which should be around 20 cents.
+encoded_initializer_function = encode_function_data(DraculaLoot[-1].initialize, cCA, cultureCoin, 15500000000000000, "https://games.greatlibrary.io/games/DRACULA/DraculaLoot/")
 
 print("Function encoded.")
 

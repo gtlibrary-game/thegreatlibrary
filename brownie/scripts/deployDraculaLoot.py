@@ -9,4 +9,6 @@ def main():
     # Deploy the contract
     print("Deploying the contract...")
 
-    DraculaLoot.deploy({'from': account});
+    loot = DraculaLoot.deploy({'from': account});
+
+    culture_coin.setAddon(loot.address, True, {"from": account})
