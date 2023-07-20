@@ -20,6 +20,9 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
     mapping (address => uint) balances;
 
     mapping(address => mapping(uint256 => uint256)) public price;
+    mapping(address => uint256[]) public tokensOnSale;
+    mapping(address => mapping(uint256 => bool)) onSale;
+    mapping(address => mapping(uint256 => uint256)) onSaleLoc;
 
     address private cCA;        /// Adminisistrator
     address private gasToken;   /// culturecoin.
@@ -28,6 +31,31 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         operatorFee = 1;  // 1% is the default.
         cCA = _cCA;
         gasToken = _gasToken;
+    }
+
+    function totalOnSale(address _hostContract) public view returns (uint256) {
+	return tokensOnSale[_hostContract].length;
+    }
+    function tokenOnSaleByIndex(address _hostContract, uint256 index) public view returns (uint256) {
+    	require(index < tokensOnSale[_hostContract].length, "Index out of bounds");
+    	return tokensOnSale[_hostContract][index];
+    }
+    function addSale(address _hostContract, uint256 _tokenId, uint256 _price) private {
+	if(!onSale[_hostContract][_tokenId]) {
+	    tokensOnSale[_hostContract].push(_tokenId);
+            onSale[_hostContract][_tokenId] = true;
+
+            uint256 index = tokensOnSale[_hostContract].length - 1;
+            onSaleLoc[_hostContract][_tokenId] = index;
+	}  // No else.. If already listed, it is already listed. --JRR
+    }
+    function removeSale(address _hostContract, uint256 _tokenId) private {
+        onSale[_hostContract][_tokenId] = false;
+
+        uint256 index = onSaleLoc[_hostContract][_tokenId];
+    	uint256 lastToken = tokensOnSale[_hostContract][tokensOnSale[_hostContract].length - 1];
+    	tokensOnSale[_hostContract][index] = lastToken;
+    	tokensOnSale[_hostContract].pop();
     }
 
     function setFee(uint256 _fee) external {
@@ -41,13 +69,22 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         address owner = book.ownerOf(_tokenId);
         require(msg.sender == owner, "Caller does not own token");
 
+	if(_price == 0 && price[_hostContract][_tokenId] > 0){		// Item might already be on sale...
+		removeSale(_hostContract, _tokenId);
+	}
+
         price[_hostContract][_tokenId] = _price;
+
+	
+	if(_price != 0) {
+		addSale(_hostContract, _tokenId, _price);
+	}
 
         emit OnSale(_hostContract, owner, _tokenId, _price);
     }
 
     function buy(address _hostContract, uint _tokenId) external nonReentrant payable {
-	requite(operatorFee <= 100, "This acutionhouse contract is a brick. (001)");
+	require(operatorFee <= 100, "This acutionhouse contract is a brick. (001)");
         LiveTradables live = LiveTradables(_hostContract);
         BookTradable book = BookTradable(_hostContract);
         address owner = book.ownerOf(_tokenId);
@@ -57,6 +94,7 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         book.safeTransferFromRegistry(owner, msg.sender, _tokenId);
 
         price[_hostContract][_tokenId] = 0;
+	removeSale(_hostContract, _tokenId);
 
         uint256 ownerFee = book.getRoyalty();
 
@@ -78,7 +116,7 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
     }
 
     function buyWithCC(address _hostContract, uint _tokenId, uint256 _amount) external nonReentrant {
-	requite(operatorFee <= 100, "This acutionhouse contract is a brick. (002)");
+	require(operatorFee <= 100, "This acutionhouse contract is a brick. (002)");
         CultureCoin CC = CultureCoin(gasToken);
         LiveTradables live = LiveTradables(_hostContract);
         BookTradable book = BookTradable(_hostContract);
@@ -90,6 +128,7 @@ contract AuctionHouse is Receiver, ReentrancyGuard {
         book.safeTransferFromRegistry(owner, msg.sender, _tokenId);
 
 	price[_hostContract][_tokenId] = 0;
+	removeSale(_hostContract, _tokenId);
 
         uint256 ownerFee = book.getRoyalty();
 

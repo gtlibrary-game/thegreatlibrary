@@ -33,7 +33,7 @@ print(CC)
 with open('DraculaHero.json') as f:
     rABI = json.load(f)
 heroes = Contract.from_abi('DraculaHero', draculaHeroAddress, dlABI)
-print(CC)
+print(heroes)
 
 
 def main():

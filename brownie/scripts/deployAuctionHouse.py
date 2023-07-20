@@ -1,4 +1,5 @@
 import os
+import json
 import inspect
 from brownie import *
 
@@ -21,3 +22,7 @@ def main():
 
     market = AuctionHouse.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
     print("AuctionHouse deployed at:" + market.address)
+
+    print("Run: brownie run scripts/setupDracula.py")
+    #CC.setAddon(auctionHouseAddress, True,  {"from": account})
+
