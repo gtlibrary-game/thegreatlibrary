@@ -17,23 +17,23 @@ cultureCoinAddress = os.environ['cultureCoinAddress']
 miniMartAddress = os.environ['miniMartAddress']
 
 with open('DraculaLoot.json') as f:
-    dlABI = json.load(f)
-dracula_loot = Contract.from_abi('DraculaLoot', draculaLootAddress, dlABI)
+    ABI = json.load(f)
+dracula_loot = Contract.from_abi('DraculaLoot', draculaLootAddress, ABI)
 print(dracula_loot)
 
 with open('Relics.json') as f:
-    rABI = json.load(f)
-relics = Contract.from_abi('Relics', relicsAddress, dlABI)
+    ABI = json.load(f)
+relics = Contract.from_abi('Relics', relicsAddress, ABI)
 print(relics)
 
 with open('CultureCoin.json') as f:
-    rABI = json.load(f)
-CC = Contract.from_abi('CultureCoin', cultureCoinAddress, dlABI)
+    ABI = json.load(f)
+CC = Contract.from_abi('CultureCoin', cultureCoinAddress, ABI)
 print(CC)
 
 with open('DraculaHero.json') as f:
-    rABI = json.load(f)
-heroes = Contract.from_abi('DraculaHero', draculaHeroAddress, dlABI)
+    ABI = json.load(f)
+heroes = Contract.from_abi('DraculaHero', draculaHeroAddress, ABI)
 print(heroes)
 
 
