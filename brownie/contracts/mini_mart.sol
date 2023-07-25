@@ -79,6 +79,8 @@ contract MiniMart is Receiver, ReentrancyGuard {
 
         hostContract.safeTransferFromRegistry(owner, msg.sender, _tokenId);
 
+        price[_hostContract][_tokenId] = 0;
+
         uint256 ownerFee = hostContract.getRoyalty();
 
         uint256 operatorCut = (msgValue * operatorFee) / 100;          // Divide to make it a percent.

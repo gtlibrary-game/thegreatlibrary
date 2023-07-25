@@ -14,6 +14,7 @@ draculaHeroAddress = os.environ['draculaHeroAddress']
 tombstoneAddress = os.environ['tombstoneAddress']
 auctionHouseAddress = os.environ['auctionHouseAddress']
 cultureCoinAddress = os.environ['cultureCoinAddress']
+miniMartAddress = os.environ['miniMartAddress']
 
 with open('DraculaLoot.json') as f:
     dlABI = json.load(f)
@@ -44,6 +45,9 @@ def main():
 
     print("CC setAddon (AuctionHouse)")
     CC.setAddon(auctionHouseAddress, True,  {"from": account})
+
+    print("CC setAddon (MiniMart)")
+    CC.setAddon(miniMartAddress, True,  {"from": account})
 
     # Deploy the contract
     print("Setting up the dracula_loot contract addon (Tombstone)...")
