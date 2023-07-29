@@ -33,13 +33,25 @@ contract Tombstone is ReentrancyGuardUpgradeable {
 
 	uint LOOT_IDX = 0;	// For ease of reading.
 	uint AMOUNT_IDX = 1;
-	mapping(uint256 => uint256[12]) private amounts;
-	mapping(uint256 => uint256[12]) private lootIds;
+	mapping(uint256 => uint256[12]) public amounts;
+	mapping(uint256 => uint256[12]) public lootIds;
 
 	// Call this function on an item id to find out what it's transmute properties are
 	function getTransmuteByItem(uint256 _iId) public view returns (uint256[12] memory, uint256[12] memory) {
 		return (lootIds[_iId], amounts[_iId]);
     	}
+
+	// Call this function on an item id and index to find out what its transmute loot property is
+	function getTransmuteLootByItemAndIndex(uint256 _iId, uint256 index) public view returns (uint256) {
+    		require(index < 12, "Index out of bounds");
+    		return lootIds[_iId][index];
+	}
+
+	// Call this function on an item id and index to find out what its transmute amount property is
+	function getTransmuteAmountsByItemAndIndex(uint256 _iId, uint256 index) public view returns (uint256) {
+    		require(index < 12, "Index out of bounds");
+    		return amounts[_iId][index];
+	}
 
 	function transmute1(uint256 _hId, int _slot, uint _time, uint _what, uint _amount) public returns(uint256) {
 		require(msg.sender == hero.ownerOf(_hId) || cCA == msg.sender || isAddon[msg.sender], "You don't own that hero.");
