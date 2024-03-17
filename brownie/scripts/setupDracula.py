@@ -49,6 +49,12 @@ def main():
     print("CC setAddon (MiniMart)")
     CC.setAddon(miniMartAddress, True,  {"from": account})
 
+    print("CC setAddon (draculaLoot)")
+    CC.setAddon(draculaLootAddress, True, {"from": account})
+
+    print("CC setAddon (draculaHearo)")
+    CC.setAddon(draculaHeroAddress, True, {"from": account})
+
     # Deploy the contract
     print("Setting up the dracula_loot contract addon (Tombstone)...")
     dracula_loot.setAddon(tombstoneAddress, True, {"from": account})

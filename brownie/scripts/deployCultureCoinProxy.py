@@ -1,4 +1,5 @@
 import os
+import json
 import inspect
 from brownie import *
 from dotenv import load_dotenv
@@ -17,8 +18,13 @@ OneCC = 1000000000000000000   # This number is equal to 1 Culture Coin
 maxint = 115792089237316195423570985008687907853269984665640564039457584007913129639935
 deployAmount = 2 * 210100027 * OneCC
 
+with open('CultureCoin.json') as f:
+    ABI = json.load(f)
+CC = Contract.from_abi('CultureCoin', cultureCoinImplAddress, ABI)
+print(CC)
+
 from scripts.helpful_scripts import encode_function_data
-encoded_initializer_function = encode_function_data(CultureCoin[-1].initialize, deployAmount, cCA)
+encoded_initializer_function = encode_function_data(CC.initialize, deployAmount, cCA)
 
 
 def main():
@@ -37,4 +43,4 @@ def main():
         {"from": account}
     )
 
-    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+    print("Note: Please save new contract address in ../.env: cultureCoinAddress=" + proxy.address)

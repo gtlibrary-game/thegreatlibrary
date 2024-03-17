@@ -20,9 +20,10 @@ def main():
 
     #market = MarketPlace[len(MarketPlace) - 1]
 
-    market = AuctionHouse.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
-    print("AuctionHouse deployed at:" + market.address)
+    auction = AuctionHouse.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
+    print("AuctionHouse deployed at:" + auction.address)
 
     print("Run: brownie run scripts/setupDracula.py")
-    #CC.setAddon(auctionHouseAddress, True,  {"from": account})
+
+    print("Note: save new contract address in ../.env: auctionHouseAddrees=" + auction.address)
 

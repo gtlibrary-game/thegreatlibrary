@@ -8,4 +8,6 @@ def main():
     # Deploy the contract
     print("Deploying the contract...")
 
-    Tombstone.deploy({'from': account}); #, "gas_price": 900000000000})
+    tomb = Tombstone.deploy({'from': account}); #, "gas_price": 900000000000})
+
+    print("Note: save new contract address in ../.env: tombstoneImplAddress=" + tomb.address)

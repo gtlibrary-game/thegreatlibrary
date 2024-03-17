@@ -5,8 +5,13 @@ from brownie import *
 from dotenv import load_dotenv
 load_dotenv()
 
+print("DEPRICATED! Use MiniMart!")
+exit(1)
+
 cultureCoinAddress = os.environ['cultureCoinAddress']
 print("cuturecoin: " + cultureCoinAddress)
+
+
 
 def main():
     account = accounts.load("Account1")
@@ -22,4 +27,4 @@ def main():
     market = MarketPlace.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
     print("Marketplace contract deployed at:" + market.address)
 
-    print("WARNING!!! YOU HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+    print("Note: save new contract address in ../.env: marketPlaceAddress=" + market.address)

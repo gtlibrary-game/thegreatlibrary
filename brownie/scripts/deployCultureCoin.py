@@ -16,4 +16,6 @@ def main():
     deployAmount = 2 * 210100027 * OneCC
     print("Deploying with amount:", deployAmount)
 
-    CultureCoin.deploy({'from': account}); #, "gas_price": 900000000000})
+    cc = CultureCoin.deploy({'from': account}); #, "gas_price": 900000000000})
+
+    print("Note: save new contract address in ../.env: cultureCoinImplAddress=" + cc.address)

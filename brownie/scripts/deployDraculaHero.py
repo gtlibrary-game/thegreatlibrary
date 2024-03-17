@@ -34,5 +34,6 @@ def main():
     registryAddress = "0"
     hero = DraculaHero.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, {"from": account})
 
-    culture_coin.setAddon(hero.address, True, {"from": account})
+    print("Note: save new contract address in ../.env: draculaHeroAddress=" + hero.address)
+
 

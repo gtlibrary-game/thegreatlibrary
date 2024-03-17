@@ -22,4 +22,4 @@ def main():
     press = PrintingPress.deploy(cCA, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
     print("Priting Press contract deployed at:" + press.address)
 
-    print("WARNING!!! YOU HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+    print("Note: save new contract address in ../.env: printPressAddress=" + press.address)

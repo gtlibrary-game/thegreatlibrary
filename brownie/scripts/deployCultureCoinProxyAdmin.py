@@ -10,5 +10,6 @@ def main():
     # Deploy the contract
     print("Deploying the Proxy Admin Address for Culture Coin...")
 
-    ProxyAdmin.deploy( {"from": account.address})
+    proxyAdmin = ProxyAdmin.deploy( {"from": account.address})
 
+    print("Note: save new contract address in ../.env: proxyAdmin=" + proxyAdmin.address)

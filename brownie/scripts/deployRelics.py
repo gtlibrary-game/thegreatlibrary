@@ -18,5 +18,7 @@ def main():
     # Deploy the contract
     print("Deploying the contract...")
 
-    Relics.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, {"from": account})
+    relics = Relics.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, {"from": account})
+
+    print("Note: save new contract address in ../.env: relicsAddress=" + relics.address)
 

@@ -11,4 +11,4 @@ def main():
 
     loot = DraculaLoot.deploy({'from': account});
 
-    culture_coin.setAddon(loot.address, True, {"from": account})
+    print("Note: save new contract address in ../.env: draculaLootImplAddress=" + loot.address)

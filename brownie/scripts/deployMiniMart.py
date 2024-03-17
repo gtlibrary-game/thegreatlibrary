@@ -21,3 +21,4 @@ def main():
 
     market = MiniMart.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
     print("MiniMart deployed at:" + market.address)
+    print("Note: save new contract address in ../.env: miniMartAddress=" + market.address)

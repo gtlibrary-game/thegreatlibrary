@@ -1,0 +1,889 @@
+// Start of ./autodeploy.py
+import os
+import time
+import glob
+from os.path import dirname, basename, isfile, join
+# Load all the files in the directory checking every 1 second for a change
+# from the previous check
+old_modules = glob.glob(join(dirname(__file__), "*.py"))
+while True:
+    modules = glob.glob(join(dirname(__file__), "*.py"))
+    changed = diff(old_modules, modules)
+    __all__post = [ basename(f)[:-3] for f in changed if isfile(f) and not f.endswith('__init__.py')]
+    print(__all__post)
+    time.sleep(1)
+    old_modules = modules
+// End of {file_path}
+// Start of ./deployAuctionHouse.py
+import os
+import json
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("cuturecoin: " + cultureCoinAddress)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #market = MarketPlace[len(MarketPlace) - 1]
+    auction = AuctionHouse.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
+    print("AuctionHouse deployed at:" + auction.address)
+    print("Run: brownie run scripts/setupDracula.py")
+    print("Note: save new contract address in ../.env: auctionHouseAddrees=" + auction.address)
+// End of {file_path}
+// Start of ./deployBaseLoot.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    BaseLoot.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./deployBaseLootProxy.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using cultureCoinAddress: " + cultureCoinAddress)
+blImplAddress = os.environ['baseLootImplAddress']
+print("Using BL Impl address of ", blImplAddress)
+baseSpellsAddress = os.environ['baseSpellsAddress']
+print("Using baseSpellsAddress: " + baseSpellsAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+from scripts.helpful_scripts import encode_function_data
+## address _cCA, address _cultureCoin, address _baseSpells, string memory _uri
+encoded_initializer_function = encode_function_data(BaseLoot[-1].initialize, cCA, cultureCoinAddress, baseSpellsAddress, "https://greatlinbrary.io/games/TSC/BaseLoot/")
+print("Function encoded.")
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    proxy = TransparentUpgradeableProxy.deploy(
+        blImplAddress,
+        proxyAdmin,
+        encoded_initializer_function,
+        {"from": account}
+    )
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployBaseSpells.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    BaseSpells.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./deployBaseSpellsProxy.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.environ["cCA"]
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using cultureCoinAddress: " + cultureCoinAddress)
+bsImplAddress = os.environ['baseSpellsImplAddress']
+print("Using BS Impl address of ", bsImplAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+from scripts.helpful_scripts import encode_function_data
+## address _cCA, address cultureCoin, string memory _uri
+encoded_initializer_function = encode_function_data(BaseSpells[-1].initialize, cCA, cultureCoinAddress, "https://greatlinbrary.io/games/TSC/BaseSpells/")
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    proxy = TransparentUpgradeableProxy.deploy(
+        bsImplAddress,
+        proxyAdmin,
+        encoded_initializer_function,
+        {"from": account}
+    )
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployBEN.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CC address of ", cultureCoinAddress)
+daedalusClassBoosterAddress = os.environ['daedalusClassBoosterAddress']
+print("Using DCBT address of ", daedalusClassBoosterAddress)
+benScratchesAddress = os.environ['benScratchesAddress']
+print("Using benScratchesAddress of ", benScratchesAddress)
+benBaseCost = os.environ['benBaseCost']
+print("Using benBaseCost of ", benBaseCost)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    BEN.deploy(cultureCoinAddress,
+                                    daedalusClassBoosterAddress, 
+                                    cCA, 35, 18, 
+                                    benScratchesAddress, 
+                                    benBaseCost,
+                                    {'from': account}) # , "gas_price": gasPrice})
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployBookTradable.py
+import inspect
+from brownie import *
+gasPrice = 100000000000
+cultureCoinAddress = "0x29e5eeBABC13Ea61bf36A90dcB668817FcB976Db"
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #market = MarketPlace[len(MarketPlace) - 1]
+    market = MarketPlace.deploy(account.address, account.address, cultureCoinAddress, {'from': account, "gas_price": gasPrice})
+    print("Marketplace contract deployed at:", market.address)
+// End of {file_path}
+// Start of ./deployCultureCoin.py
+import inspect
+from brownie import *
+OneCC = 1000000000000000000   # This number is equal to 1 Culture Coin
+maxint = 115792089237316195423570985008687907853269984665640564039457584007913129639935
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    deployAmount = 2 * 210100027 * OneCC
+    print("Deploying with amount:", deployAmount)
+    cc = CultureCoin.deploy({'from': account}); #, "gas_price": 900000000000})
+    print("Note: save new contract address in ../.env: cultureCoinImplAddress=" + cc.address)
+// End of {file_path}
+// Start of ./deployCultureCoinProxy.py
+import os
+import json
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinImplAddress = os.environ['cultureCoinImplAddress']
+print("Using CC Impl address of ", cultureCoinImplAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+OneCC = 1000000000000000000   # This number is equal to 1 Culture Coin
+maxint = 115792089237316195423570985008687907853269984665640564039457584007913129639935
+deployAmount = 2 * 210100027 * OneCC
+with open('CultureCoin.json') as f:
+    ABI = json.load(f)
+CC = Contract.from_abi('CultureCoin', cultureCoinImplAddress, ABI)
+print(CC)
+from scripts.helpful_scripts import encode_function_data
+encoded_initializer_function = encode_function_data(CC.initialize, deployAmount, cCA)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    proxy = TransparentUpgradeableProxy.deploy(
+        cultureCoinImplAddress,
+        proxyAdmin,
+        encoded_initializer_function,
+        {"from": account}
+    )
+    print("Note: Please save new contract address in ../.env: cultureCoinAddress=" + proxy.address)
+// End of {file_path}
+// Start of ./deployCultureCoinProxyAdmin.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the Proxy Admin Address for Culture Coin...")
+    proxyAdmin = ProxyAdmin.deploy( {"from": account.address})
+    print("Note: save new contract address in ../.env: proxyAdmin=" + proxyAdmin.address)
+// End of {file_path}
+// Start of ./deployCultureCoinV1M0m1.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    CultureCoinV1M0m1.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./deployDraculaHero.py
+import os
+import json
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+#gasPrice = 100000000000
+cCA = os.environ['draculaCCA']
+cultureCoinAddress = os.environ['cultureCoinAddress']
+bookmarkAddress = os.environ['draculaBookmarkAddress']
+# Load the ABI from disk
+with open('CultureCoin.json') as f:
+    abi = json.load(f)
+culture_coin = Contract.from_abi('CultureCoin', cultureCoinAddress, abi)
+print(culture_coin)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    # address _cCA, address _cultureCoin, address _nbt, address _registryAddress, address _baseSpells, address _myItems
+    registryAddress = "0"
+    hero = DraculaHero.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, {"from": account})
+    culture_coin.setAddon(hero.address, True, {"from": account})
+// End of {file_path}
+// Start of ./deployDraculaLoot.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    loot = DraculaLoot.deploy({'from': account});
+    culture_coin.setAddon(loot.address, True, {"from": account})
+// End of {file_path}
+// Start of ./deployDraculaLootProxy.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("draculaCCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using cultureCoinAddress: " + cultureCoinAddress)
+dlImplAddress = os.environ['draculaLootImplAddress']
+print("Using DL Impl address of ", dlImplAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+from scripts.helpful_scripts import encode_function_data
+## address _cCA, address _cultureCoin, address _baseSpells, string memory _uri # This is .0155 CC which should be around 20 cents.
+encoded_initializer_function = encode_function_data(DraculaLoot[-1].initialize, cCA, cultureCoin, 15500000000000000, "https://games.greatlibrary.io/games/DRACULA/DraculaLoot/")
+print("Function encoded.")
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    proxy = TransparentUpgradeableProxy.deploy(
+        dlImplAddress,
+        proxyAdmin,
+        encoded_initializer_function,
+        {"from": account}
+    )
+// End of {file_path}
+// Start of ./deployDummy.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    DummyContract.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./deployGamblersUnion.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CC address of ", cultureCoinAddress)
+daedalusClassBoosterAddress = os.environ['daedalusClassBoosterAddress']
+print("Using DCBT address of ", daedalusClassBoosterAddress)
+benDeployAddress = os.environ['benDeployAddress']
+print("Using benDeployAddress: " + benDeployAddress)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    GamblersUnionBEN.deploy(cultureCoinAddress,
+                                    daedalusClassBoosterAddress, 
+                                    cCA, 35, 18, 
+                                    benDeployAddress, 
+                                    {'from': account}) # , "gas_price": gasPrice})
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployHero.py
+import os
+import json
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+#gasPrice = 100000000000
+cCA = os.environ['cCA']
+cultureCoinAddress = os.environ['cultureCoinAddress']
+bookmarkAddress = os.environ['bookmarkAddress']
+baseSpellsAddress = os.environ['baseSpellsAddress']
+myItemsAddress = os.environ['myItemsAddress']
+# Load the ABI from disk
+with open('CultureCoin.json') as f:
+    abi = json.load(f)
+culture_coin = Contract.from_abi('CultureCoin', cultureCoinAddress, abi)
+print(culture_coin)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    # address _cCA, address _cultureCoin, address _nbt, address _registryAddress, address _baseSpells, address _myItems
+    registryAddress = "0"
+    hero = Hero.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, baseSpellsAddress, myItemsAddress, {"from": account})
+    culture_coin.setAddon(hero.address, True, {"from": account})
+    ### , "gas": gasPrice})
+// End of {file_path}
+// Start of ./deployICO.py
+import os
+import time
+import inspect
+from brownie import *
+from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CC address of ", cultureCoinAddress)
+tokenPreSale = os.environ['tokenPreSale']
+print("Using tokenPreSale:", tokenPreSale)
+vestingContract = os.environ['vestingContract']
+print("Using vestingContract:", vestingContract)
+def main():
+    # Load the account using the private key from the environment
+    #operator_account = accounts.add(os.getenv("OPERATOR_PRIVATE_KEY"))
+    account = accounts.load("Account1")
+    # Load the token presale contract using the address from the environment
+    myTokenPreSale = Contract(tokenPreSale)
+    # Set the vesting contract address
+    tx = myTokenPreSale.setVestingContractAddress(vestingContract, {"from": account})
+    # Confirm the transaction
+    tx.wait(1)
+    print(f"Vesting contract address set to: {vestingContract}")
+    myVesting = Contract(vestingContract)
+    tx = myVesting.setVestingAllocation({"from": account})
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #// constructor
+    #constructor(address _tokenaddress, uint256 _tokenvalue, uint _startTime, uint _duringDays){
+    #tokenprice = _tokenvalue;
+    #token  = IERC20(_tokenaddress);
+    #START = _startTime;
+    #DAYS = _duringDays;
+    #}
+    Vesting.deploy(cultureCoinAddress,
+                                    tokenPreSale,
+                                    {'from': account}) # , "gas_price": gasPrice})
+// End of {file_path}
+// Start of ./deployMarketPlace.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+print("DEPRICATED! Use MiniMart!")
+exit(1)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("cuturecoin: " + cultureCoinAddress)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #market = MarketPlace[len(MarketPlace) - 1]
+    market = MarketPlace.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
+    print("Marketplace contract deployed at:" + market.address)
+    print("Note: save new contract address in ../.env: marketPlaceAddress=" + market.address)
+// End of {file_path}
+// Start of ./deployMiniMart.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("cuturecoin: " + cultureCoinAddress)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #market = MarketPlace[len(MarketPlace) - 1]
+    market = MiniMart.deploy(account.address, account.address, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
+    print("MiniMart deployed at:" + market.address)
+    print("Note: save new contract address in ../.env: miniMartAddress=" + market.address)
+// End of {file_path}
+// Start of ./deployMyItems.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+#gasPrice = 100000000000
+cCA = os.environ['cCA']
+cultureCoinAddress = os.environ['cultureCoinAddress']
+registryAddress = os.environ['marketPlaceAddress']
+baseSpellsAddress = os.environ['baseSpellsAddress']
+bookmarkAddress = os.environ['bookmarkAddress']
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #address _cCA, address _cultureCoin, address _registryAddress, address _baseSpells, address _nbt
+    MyItems.deploy(cCA, cultureCoinAddress, registryAddress, baseSpellsAddress, bookmarkAddress, {"from": account})
+    ### , "gas": gasPrice})
+// End of {file_path}
+// Start of ./deployPrintingPress.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.environ['cCA']
+print("culturecoin administrator: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("cuturecoin: " + cultureCoinAddress)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    press = PrintingPress.deploy(cCA, cultureCoinAddress, {'from': account}) # , "gas_price": gasPrice})
+    print("Priting Press contract deployed at:" + press.address)
+    print("Note: save new contract address in ../.env: printPressAddress=" + press.address)
+// End of {file_path}
+// Start of ./deployRelics.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.environ['draculaCCA']
+cultureCoinAddress = os.environ['cultureCoinAddress']
+bookmarkAddress = os.environ['draculaBookmarkAddress']
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    Relics.deploy(cCA, cultureCoinAddress, bookmarkAddress, bookmarkAddress, {"from": account})
+// End of {file_path}
+// Start of ./deployTheGoldenKeys.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CC address of ", cultureCoinAddress)
+daedalusClassBoosterAddress = os.environ['daedalusClassBoosterAddress']
+print("Using DCBT address of ", daedalusClassBoosterAddress)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    theGoldenKeys = TheGoldenKeys.deploy(cultureCoinAddress, daedalusClassBoosterAddress, cCA, 35, 18, {'from': account}) # , "gas_price": gasPrice})
+    print("TheGoldenKeys contract deployed at:", theGoldenKeys.address)
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployTimeCube.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    TimeCube.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./deployTimeCubeProxy.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+timeCubeImplAddress = os.environ['timeCubeImplAddress']
+print("Using TimeCube Impl address of ", timeCubeImplAddress)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CultureCoin address of ", cultureCoinAddress)
+baseSpellsAddress = os.environ['baseSpellsAddress']
+print("Using BaseSpells address of ", baseSpellsAddress)
+baseLootAddress = os.environ['baseLootAddress']
+print("Using BaseLoot address of ", baseLootAddress)
+myItemsAddress = os.environ['myItemsAddress']
+print("Using MyItems address of ", myItemsAddress)
+heroAddress = os.environ['heroAddress']
+print("Using Hero address of ", heroAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+from scripts.helpful_scripts import encode_function_data
+# address _cCA, address _cultureCoin, address _hero, address _spells, address _loot, address _items, string memory _uri
+encoded_initializer_function = encode_function_data(TimeCube[-1].initialize, cCA, cultureCoinAddress, heroAddress, baseSpellsAddress, baseLootAddress, myItemsAddress, "TimeCube")
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    proxy = TransparentUpgradeableProxy.deploy(
+        timeCubeImplAddress,
+        proxyAdmin,
+        encoded_initializer_function,
+        {"from": account}
+    )
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployTokenPreSale.py
+import os
+import time
+import inspect
+from brownie import *
+from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CC address of ", cultureCoinAddress)
+cCICOPrice = os.environ['cCICOPrice']
+print("Using CC Price:", cCICOPrice)
+iCOStart = os.environ['iCOStart']
+print("using iCOStart:", iCOStart)
+iCODays = os.environ['iCODays']
+print("using iCODays:", iCODays)
+iCOStart = eval(iCOStart)
+print("iCOStart:", iCOStart)
+epoch_time = datetime(1970, 1, 1)
+delta = (iCOStart - epoch_time)
+print('Datetime to Seconds since epoch:', delta.total_seconds())
+iCOStart = str(int(delta.total_seconds()))
+print("Timestamp for start of ico:", iCOStart)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #// constructor
+    #constructor(address _tokenaddress, uint256 _tokenvalue, uint _startTime, uint _duringDays){
+    #tokenprice = _tokenvalue;
+    #token  = IERC20(_tokenaddress);
+    #START = _startTime;
+    #DAYS = _duringDays;
+    #}
+    TokenPreSale.deploy(cultureCoinAddress,
+                                    cCICOPrice, 
+				    iCOStart, iCODays, 
+                                    {'from': account}) # , "gas_price": gasPrice})
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployTombstone.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    Tombstone.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./deployTombstoneProxy.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("draculaCCA")
+print("Using dracula's cCA: " + cCA)
+tombstoneImplAddress = os.environ['tombstoneImplAddress']
+print("Using Tombstone Impl address of ", tombstoneImplAddress)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CultureCoin address of ", cultureCoinAddress)
+draculaLootAddress = os.environ['draculaLootAddress']
+print("Using DraculaLoot address of ", draculaLootAddress)
+relicsAddress = os.environ['relicsAddress']
+print("Using Relics address of ", relicsAddress)
+draculaHeroAddress = os.environ['draculaHeroAddress']
+print("Using Hero address of ", draculaHeroAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+from scripts.helpful_scripts import encode_function_data
+# address _cCA, address _cultureCoin, address _hero, address _spells, address _loot, address _items, string memory _uri
+encoded_initializer_function = encode_function_data(Tombstone[-1].initialize, cCA, draculaHeroAddress, draculaLootAddress, relicsAddress)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    proxy = TransparentUpgradeableProxy.deploy(
+        tombstoneImplAddress,
+        proxyAdmin,
+        encoded_initializer_function,
+        {"from": account}
+    )
+// End of {file_path}
+// Start of ./deployVesting.py
+import os
+import time
+import inspect
+from brownie import *
+from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinAddress = os.environ['cultureCoinAddress']
+print("Using CC address of ", cultureCoinAddress)
+tokenPreSale = os.environ['tokenPreSale']
+print("Using tokenPreSale:", tokenPreSale)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and NOT always the cCA so please use: cCA and not account.address
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    #// constructor
+    #constructor(address _tokenaddress, uint256 _tokenvalue, uint _startTime, uint _duringDays){
+    #tokenprice = _tokenvalue;
+    #token  = IERC20(_tokenaddress);
+    #START = _startTime;
+    #DAYS = _duringDays;
+    #}
+    Vesting.deploy(cultureCoinAddress,
+                                    tokenPreSale, 
+                                    {'from': account}) # , "gas_price": gasPrice})
+    print("WARNING!!! YOU MAY HAVE TO REDEPLOY THE CLOUD CODE AT THE END OF THE DEPLOYMENT PROCESS: bakerydemo% bash deployCloud.sh")
+// End of {file_path}
+// Start of ./deployXSpaces.py
+import inspect
+from brownie import *
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    # Deploy the contract
+    print("Deploying the contract...")
+    XSpaces.deploy({'from': account}); #, "gas_price": 900000000000})
+// End of {file_path}
+// Start of ./helpful_scripts.py
+from brownie import network, accounts, config
+import eth_utils
+NON_FORKED_LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["hardhat", "development", "ganache"]
+LOCAL_BLOCKCHAIN_ENVIRONMENTS = NON_FORKED_LOCAL_BLOCKCHAIN_ENVIRONMENTS + [
+    "mainnet-fork",
+    "binance-fork",
+    "matic-fork",
+def get_account(number=None):
+    if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        return accounts[0]
+    if number:
+        return accounts[number]
+    if network.show_active() in config["networks"]:
+        account = accounts.add(config["wallets"]["from_key"])
+        return account
+    return None
+def encode_function_data(initializer=None, *args):
+    """Encodes the function call so we can work with an initializer.
+    Args:
+        initializer ([brownie.network.contract.ContractTx], optional):
+        The initializer function we want to call. Example: `box.store`.
+        Defaults to None.
+        args (Any, optional):
+        The arguments to pass to the initializer function
+    Returns:
+        [bytes]: Return the encoded bytes.
+    """
+    if not len(args): args = b''
+    if initializer: return initializer.encode_input(*args)
+    return b''
+def upgrade(
+    account,
+    proxy,
+    newimplementation_address,
+    proxy_admin_contract=None,
+    initializer=None,
+    *args
+    transaction = None
+    if proxy_admin_contract:
+        if initializer:
+            encoded_function_call = encode_function_data(initializer, *args)
+            transaction = proxy_admin_contract.upgradeAndCall(
+                proxy.address,
+                newimplementation_address,
+                encoded_function_call,
+                {"from": account},
+            )
+        else:
+            transaction = proxy_admin_contract.upgrade(
+                proxy.address, newimplementation_address, {"from": account}
+            )
+    else:
+        if initializer:
+            encoded_function_call = encode_function_data(initializer, *args)
+            transaction = proxy.upgradeToAndCall(
+                newimplementation_address, encoded_function_call, {"from": account}
+            )
+        else:
+            transaction = proxy.upgradeTo(newimplementation_address, {"from": account})
+    return transaction
+// End of {file_path}
+// Start of ./setupDracula.py
+import os
+import json
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+#gasPrice = 100000000000
+draculaLootAddress = os.environ['draculaLootAddress']
+relicsAddress = os.environ['relicsAddress']
+draculaHeroAddress = os.environ['draculaHeroAddress']
+tombstoneAddress = os.environ['tombstoneAddress']
+auctionHouseAddress = os.environ['auctionHouseAddress']
+cultureCoinAddress = os.environ['cultureCoinAddress']
+miniMartAddress = os.environ['miniMartAddress']
+with open('DraculaLoot.json') as f:
+    ABI = json.load(f)
+dracula_loot = Contract.from_abi('DraculaLoot', draculaLootAddress, ABI)
+print(dracula_loot)
+with open('Relics.json') as f:
+    ABI = json.load(f)
+relics = Contract.from_abi('Relics', relicsAddress, ABI)
+print(relics)
+with open('CultureCoin.json') as f:
+    ABI = json.load(f)
+CC = Contract.from_abi('CultureCoin', cultureCoinAddress, ABI)
+print(CC)
+with open('DraculaHero.json') as f:
+    ABI = json.load(f)
+heroes = Contract.from_abi('DraculaHero', draculaHeroAddress, ABI)
+print(heroes)
+def main():
+    account = accounts.load("Account1")
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    print("CC setAddon (AuctionHouse)")
+    CC.setAddon(auctionHouseAddress, True,  {"from": account})
+    print("CC setAddon (MiniMart)")
+    CC.setAddon(miniMartAddress, True,  {"from": account})
+    # Deploy the contract
+    print("Setting up the dracula_loot contract addon (Tombstone)...")
+    dracula_loot.setAddon(tombstoneAddress, True, {"from": account})
+    print("Setting up the relics contract addon (Tombstone)...")
+    relics.setAddon(tombstoneAddress, True, {"from": account})
+    # Need the auction house as an addon too.
+    print("Setting up the relics contract addon (AutionHouse)...")
+    relics.setAddon(auctionHouseAddress, True, {"from": account})
+    
+    # Need the auction house as an addon too.
+    print("Setting up the heroes contract addon (AutionHouse)...")
+    heroes.setAddon(auctionHouseAddress, True, {"from": account})
+// End of {file_path}
+// Start of ./upgradeCultureCoin.py
+import os
+import inspect
+from brownie import *
+from dotenv import load_dotenv
+load_dotenv()
+cCA = os.getenv("cCA")
+print("Using cCA: " + cCA)
+cultureCoinImplAddress = os.getenv("cultureCoinImplAddress")
+print("Using cultureCoinImplAddress: " + cultureCoinImplAddress)
+proxyAdmin = os.environ['proxyAdmin']
+print("Using proxyAdmin: " + proxyAdmin)
+from scripts.helpful_scripts import encode_function_data, upgrade
+encoded_initializer_function = encode_function_data(CultureCoin[-1].initialize, 0, cCA)
+def main():
+    account = accounts.load("Account1")     # This is the deployer account and is used to deploy the proxy but may not be the cCA
+    print("Account1:", account.address)
+    print("Balance:", account.balance())
+    print("Nonce:", account.nonce)
+    # Deploy the contract
+    print("Deploying the contract...")
+    cc_v2 = CultureCoinV1M0m1.at(cultureCoinImplAddress)
+    proxy = TransparentUpgradeableProxy[-1]
+    proxy_admin = ProxyAdmin[-1]
+    upgrade(account, proxy, cc_v2, proxy_admin_contract=proxy_admin)
+    print("Proxy has been upgraded!")
+    cc_proxy = Contract.from_abi("CultureCoin", proxy.address, CultureCoin.abi)
+     
+    print("If all went well, sit back, relax and enjoy the new version of CultureCoin!")
+// End of {file_path}
